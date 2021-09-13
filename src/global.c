@@ -347,9 +347,9 @@ void update_level()
 	level_ani++;
 	if( (level_ani & 8) == 0 )
 	{
-		set_bkg_data(13,1,&candle_tiles[0]);
+		set_bkg_data(13,1,candle_tiles);
 	} else {
-		set_bkg_data(13,1,&candle_tiles[16]);
+		set_bkg_data(13,1,candle_tiles + 16);
 	}
 	
 	//update level

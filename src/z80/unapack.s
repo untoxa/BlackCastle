@@ -8,7 +8,7 @@
 ; bc = dest
 ; call UNAPACK
 
-.area _CODE
+        .area _CODE
 
 _UNAPACK::
         POP     HL
@@ -79,7 +79,7 @@ APBRANCH3:
 
         LD      E, A
 
-		LD      (OFFSET), HL
+        LD      (OFFSET), HL
 
         LD      D,H
         JR      AP_FINISHUP
@@ -100,12 +100,12 @@ APBRANCH2:
 
         INC     DE
 
-		LD      (OFFSET), HL
+        LD      (OFFSET), HL
 
         PUSH    HL
         CALL    AP_GETGAMMA_
 
-        EX		(SP), HL
+        EX      (SP), HL
 
         LD      A,H
         CP      #32000/256
@@ -132,19 +132,19 @@ AP_FINISHUP:
         LD      H,A
 AP_FINISHUP2:
 LDIR:
-        LD      A,(HL)
-        LD      (BC),A
-        INC     HL
-        INC     BC
-        DEC     DE
-        LD      A,D
-        OR      E
-        JR      NZ,LDIR
+        PUSH    BC
+        LD      B, D
+        LD      C, E
+        POP     DE
+        LDIR
+        LD      B, D
+        LD      C, E
+        XOR     A
         POP     DE
         JP      APLOOP
 
 AP_R0_GAMMA:
-        EX		DE, HL
+        EX      DE, HL
 
         CALL    AP_GETGAMMA_
         PUSH    HL
@@ -188,7 +188,7 @@ AP_GETGAMMALOOP1:
 
         JR      AP_GETBIT4
 
-.area _BSS
+        .area _DATA
 OFFSET: 
         .DS 2
 BITS:   

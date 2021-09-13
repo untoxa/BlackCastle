@@ -8,7 +8,7 @@
 ; bc = dest
 ; call UNAPACK
 
-.area _CODE
+        .area _CODE
 
 _UNAPACK::
         PUSH    BC
@@ -153,16 +153,17 @@ AP_FINISHUP:
         LD      A,B
         SBC     A,H
         LD      H,A
-AP_FINISHUP2:
+AP_FINISHUP2::
+        INC     D
 LDIR:
-        LD      A,(HL)
+        LD      A,(HL+)
         LD      (BC),A
-        INC     HL
         INC     BC
-        DEC     DE
-        LD      A,D
-        OR      E
-        JR      NZ,LDIR
+        DEC     E
+        JR      NZ, LDIR
+        DEC     D
+        JR      NZ, LDIR
+        XOR     A
         POP     DE
         JP      APLOOP
 
@@ -217,7 +218,7 @@ AP_GETGAMMALOOP1:
 
         JR      AP_GETBIT4
 
-.area _BSS
+        .area _DATA
 OFFSET: 
         .DS 2
 BITS:   
