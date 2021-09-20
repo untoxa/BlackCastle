@@ -85,20 +85,5 @@ void main()
 	high_score = 0;
 	game_state = GS_TITLE;
 	
-	while(1)
-	{
-		switch( game_state )
-		{
-			case GS_TITLE:
-				enter_title();
-				break;
-			case GS_LEVEL:
-				enter_level();
-				break;
-			case GS_END:
-				enter_end();
-				break;
-		}
-		
-	} 
+	while(TRUE) (state_handlers[game_state])();
 }

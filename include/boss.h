@@ -1,9 +1,10 @@
 #ifndef _BOSS
 #define _BOSS
 
-#define BT_BAT		0
-#define BT_MINOTAUR	1
-#define BT_REAPER	2
+#define BT_NONE		0
+#define BT_BAT		1
+#define BT_MINOTAUR	2
+#define BT_REAPER	3
 
 #define BS_START	0
 #define BS_FIGHT	1

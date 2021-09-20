@@ -40,6 +40,148 @@ UBYTE game_over_spr3;
 //high score
 UWORD high_score;
 
+state_handler_t state_handlers[] = {
+	enter_title, enter_level, enter_end	
+};
+
+#define OBJ_CRYSTAL				0
+#define OBJ_HEART				1
+#define OBJ_SWORD				2
+#define OBJ_AXE					3
+#define OBJ_MACE				4
+#define OBJ_FALLING_PLATFORM	5
+#define OBJ_UPDOWN_PLATFORM		6
+#define OBJ_LEFTRIGHT_PLATFORM	7
+#define OBJ_KNIGHT				8
+#define OBJ_BAT					9
+#define OBJ_REAPER				10
+#define OBJ_SPIDER				11
+#define OBJ_SKELETON			12
+
+const level_t levels[] = {
+	{
+    	.bank_tiles = BANK(level1_tiles),
+		.tiles = level1_tiles,
+		.bank_sprites = BANK(sprite_tiles),
+		.sprites = sprite_tiles,
+    	.bank_hud = BANK(hud_tiles),
+    	.hud_tiles = hud_tiles,
+    	.hud_map = hud_map,
+		.minor = {
+			{
+				.bank_map = BANK(level1_1_map),
+				.map = level1_1_map,
+				.data = level1_1_data,
+				.len = 236,
+				.music = LEVEL1_MUSIC,
+				.boss_typ = BT_NONE
+			},{
+				.bank_map = BANK(level1_2_map),
+				.map = level1_2_map,
+				.data = level1_2_data,
+				.len = 236,
+				.music = LEVEL1_MUSIC,
+				.boss_typ = BT_NONE
+			},{
+				.bank_map = BANK(level1_3_map),
+				.map = level1_3_map,
+				.data = level1_3_data,
+				.len = 236,
+				.music = LEVEL1_MUSIC,
+				.boss_typ = BT_NONE
+			},{
+				.bank_map = BANK(level1_4_map),
+				.map = level1_4_map,
+				.data = NULL,
+				.len = 0,
+				.music = BOSS_MUSIC,
+				.boss_x = 76, .boss_y = 72,
+				.boss_typ = BT_BAT
+			}
+		}
+	},{
+    	.bank_tiles = BANK(level2_tiles),
+		.tiles = level2_tiles,
+		.bank_sprites = BANK(sprite_tiles),
+		.sprites = sprite_tiles,
+    	.bank_hud = BANK(hud_tiles),
+    	.hud_tiles = hud_tiles,
+    	.hud_map = hud_map,
+		.minor = {
+			{
+				.bank_map = BANK(level2_1_map),
+				.map = level2_1_map,
+				.data = level2_1_data,
+				.len = 236,
+				.music = LEVEL2_MUSIC,
+				.boss_typ = BT_NONE
+			},{
+				.bank_map = BANK(level2_2_map),
+				.map = level2_2_map,
+				.data = level2_2_data,
+				.len = 236,
+				.music = LEVEL2_MUSIC,
+				.boss_typ = BT_NONE
+			},{
+				.bank_map = BANK(level2_3_map),
+				.map = level2_3_map,
+				.data = level2_3_data,
+				.len = 236,
+				.music = LEVEL2_MUSIC,
+				.boss_typ = BT_NONE
+			},{
+				.bank_map = BANK(level2_4_map),
+				.map = level2_4_map,
+				.data = NULL,
+				.len = 0,
+				.music = BOSS_MUSIC,
+				.boss_x = 76, .boss_y = 105,
+				.boss_typ = BT_MINOTAUR
+			}
+		}
+	}, {
+    	.bank_tiles = BANK(level3_tiles),
+		.tiles = level3_tiles,
+		.bank_sprites = BANK(sprite_tiles),
+		.sprites = sprite_tiles,
+    	.bank_hud = BANK(hud_tiles),
+    	.hud_tiles = hud_tiles,
+    	.hud_map = hud_map,
+		.minor = {
+			{
+				.bank_map = BANK(level3_1_map),
+				.map = level3_1_map,
+				.data = level3_1_data,
+				.len = 236,
+				.music = LEVEL3_MUSIC,
+				.boss_typ = BT_NONE
+			},{
+				.bank_map = BANK(level3_2_map),
+				.map = level3_2_map,
+				.data = level3_2_data,
+				.len = 236,
+				.music = LEVEL3_MUSIC,
+				.boss_typ = BT_NONE
+			},{
+				.bank_map = BANK(level3_3_map),
+				.map = level3_3_map,
+				.data = level3_3_data,
+				.len = 236,
+				.music = LEVEL3_MUSIC,
+				.boss_typ = BT_NONE
+			},{
+				.bank_map = BANK(level3_4_map),
+				.map = level3_4_map,
+				.data = NULL,
+				.len = 0,
+				.music = BOSS_MUSIC,
+				.boss_x = 80, .boss_y = 76,
+				.boss_typ = BT_REAPER
+			}
+		}
+	}
+};
+
 void init_title()
 {
 	UBYTE i,j;
@@ -129,12 +271,14 @@ void init_level()
 	UBYTE i;
 	UWORD w;
 	
-	SET_BANK(1);
+	const level_t * current_level = &levels[level_maj - 1];
+	const level_minor_t * current_stage = &(current_level->minor[level_min - 1]);
 
 	fill_bkg_rect(DEVICE_SCREEN_X_OFFSET, DEVICE_SCREEN_Y_OFFSET, DEVICE_SCREEN_WIDTH, DEVICE_SCREEN_HEIGHT, 0);
 
 	//sprites
-	UNAPACK(sprite_tiles, buf);
+	SET_BANK(current_level->bank_sprites);
+	UNAPACK(current_level->sprites, buf);
 #ifdef SEGA
 	set_2bpp_palette(COMPAT_PALETTE(0,1,4,3));
 #endif
@@ -163,7 +307,8 @@ void init_level()
 	move_sprite(player_spr1,	SPRITE_OFS_X + player_x+8,	SPRITE_OFS_Y + player_y+16);
 	
 	//hud
-	UNAPACK(hud_tiles,buf);
+	SET_BANK(current_level->bank_hud);
+	UNAPACK(current_level->hud_tiles, buf);
 #ifdef SEGA
 	set_2bpp_palette(COMPAT_PALETTE(0,1,2,3));
 #endif
@@ -171,138 +316,31 @@ void init_level()
 	w = 0;
 	for( i = 0; i != 20; i++ )
 	{
-		set_bkg_tiles(VIEWPORT_X_OFS + i,0,1,2,&hud_map[w]);
+		set_bkg_tiles(VIEWPORT_X_OFS + i,0,1,2,&(current_level->hud_map[w]));
 		w += 2;
 	}
 	update_hud(HUD_LIFE);
 	update_hud(HUD_SCORE);
 	update_hud(HUD_WEAPON);
 	update_hud(HUD_LEVEL);
-	
-	//set level data
-	if( level_maj == 1 )
-	{
-		UNAPACK(level1_tiles, buf);
-		set_bkg_data(0,32,buf);
-		
-		switch( level_min )
-		{
-			case 1:
-				UNAPACK(level1_1_map, buf);
-				level_data = level1_1_data;
-				level_len = 236;
-				
-				set_music(LEVEL1_MUSIC);
-				break;
-			case 2:
-				//for( w = 0; w != 4096; w++ )
-				//{
-				//	buf[w] = level1_2_map[w];
-				//}
-				UNAPACK(level1_2_map, buf);
-				level_data = level1_2_data;
-				level_len = 236;
-				
-				set_music(LEVEL1_MUSIC);
-				break;
-			case 3:
-				UNAPACK(level1_3_map, buf);
-				level_data = level1_3_data;
-				level_len = 236;
-				
-				set_music(LEVEL1_MUSIC);
-				break;
-			case 4:
-				UNAPACK(level1_4_map, buf);
-				level_data = 0;
-				level_len = 0;
-				
-				new_boss(76,72,BT_BAT);
-			
-				set_music(BOSS_MUSIC);
-				break;	
-		}	
-	}
-	else if( level_maj == 2 )
-	{
-		UNAPACK(level2_tiles, buf);
-		set_bkg_data(0,32,buf);
-		switch( level_min )
-		{
-			case 1:
-				UNAPACK(level2_1_map, buf);
-				level_data = level2_1_data;
-				level_len = 236;
-			
-				set_music(LEVEL2_MUSIC);
-				break;
-			case 2:
-				UNAPACK(level2_2_map, buf);
-				level_data = level2_2_data;
-				level_len = 236;
-				
-				set_music(LEVEL2_MUSIC);
-				break;
-			case 3:
-				UNAPACK(level2_3_map, buf);
-				level_data = level2_3_data;
-				level_len = 236;
-				
-				set_music(LEVEL2_MUSIC);
-				break;
-			case 4:
-				UNAPACK(level2_4_map, buf);
-				level_data = 0;
-				level_len = 0;
-			
-				new_boss(76,105,BT_MINOTAUR);
-				
-				set_music(BOSS_MUSIC);
-				break;
-			
-		}
-	}
-	else if( level_maj == 3 )
-	{
-		SET_BANK(3);
-		UNAPACK(level3_tiles, buf);
-		set_bkg_data(0,32,buf);
-		
-		switch( level_min )
-		{
-			case 1:
-				UNAPACK(level3_1_map, buf);
-				level_data = level3_1_data;
-				level_len = 236;
-				
-				set_music(LEVEL3_MUSIC);
-				break;
-			case 2:
-				UNAPACK(level3_2_map, buf);
-				level_data = level3_2_data;
-				level_len = 236;
-				
-				set_music(LEVEL3_MUSIC);
-				break;
-			case 3:
-				UNAPACK(level3_3_map, buf);
-				level_data = level3_3_data;
-				level_len = 236;
-				
-				set_music(LEVEL3_MUSIC);
-				break;
-			case 4:
-				UNAPACK(level3_4_map, buf);
-				level_data = 0;
-				level_len = 0;
-				
-				new_boss(80,76,BT_REAPER);
-				
-				set_music(BOSS_MUSIC);
-				break;
-		}
-	}
-	
+
+	// level tiles
+	SET_BANK(current_level->bank_tiles);
+	UNAPACK(current_level->tiles, buf);
+	set_bkg_data(0,32,buf);
+
+	// level stage maps, data and settings 
+	SET_BANK(current_stage->bank_map);
+	UNAPACK(current_stage->map, buf);
+	level_data = current_stage->data;
+	level_len = current_stage->len;
+
+	if (current_stage->boss_typ) {
+		new_boss(current_stage->boss_x, current_stage->boss_y, current_stage->boss_typ);
+	} 
+
+	set_music(current_stage->music);
+
 	//background
 	w = 0;
 	for( i = 0; i != 22; i++ )
@@ -377,52 +415,52 @@ void update_level()
 				j = level_data[level_pos];
 				while( i == j )
 				{
-					y = level_data[++level_pos];
+					y = (level_data[++level_pos] + 2) << 3;
 					type = level_data[++level_pos];
 					
 					switch( type )
 					{
 						case OBJ_CRYSTAL:
-							new_item( 176, (y + 2) << 3, IT_CRYSTAL );
+							new_item( 176, y, IT_CRYSTAL );
 							break;
 						case OBJ_HEART: 
-							new_item( 176, (y + 2) << 3, IT_HEART );
+							new_item( 176, y, IT_HEART );
 							break;
 						case OBJ_SWORD: 
-							new_item( 176, (y + 2) << 3, IT_SWORD );
+							new_item( 176, y, IT_SWORD );
 							break;
 						case OBJ_AXE:
-							new_item( 176, (y + 2) << 3, IT_AXE );
+							new_item( 176, y, IT_AXE );
 							break;
 						case OBJ_MACE:
-							new_item( 176, (y + 2) << 3, IT_MACE );
+							new_item( 176, y, IT_MACE );
 							break;	
 						case OBJ_FALLING_PLATFORM: 
-							new_platform( 176, (y + 2) << 3, PT_FALLING_PLATFORM );
+							new_platform( 176, y, PT_FALLING_PLATFORM );
 							break;
 						case OBJ_UPDOWN_PLATFORM:
-							new_platform( 176, (y + 2) << 3, PT_UPDOWN_PLATFORM );
+							new_platform( 176, y, PT_UPDOWN_PLATFORM );
 							break;
 						case OBJ_LEFTRIGHT_PLATFORM:
-							new_platform( 176, (y + 2) << 3, PT_LEFTRIGHT_PLATFORM );
+							new_platform( 176, y, PT_LEFTRIGHT_PLATFORM );
 							break;
 						case OBJ_KNIGHT: 
-							new_monster( 176, (y + 2) << 3, MT_KNIGHT );
+							new_monster( 176, y, MT_KNIGHT );
 							break;
 						case OBJ_BAT: 
-							new_monster( 176, (y + 2) << 3, MT_BAT );
+							new_monster( 176, y, MT_BAT );
 							break;
 						case OBJ_REAPER: 
-							new_monster( 176, (y + 2) << 3, MT_REAPER );
+							new_monster( 176, y, MT_REAPER );
 							break;
 						case OBJ_SPIDER: 
-							new_monster( 176, (y + 2) << 3, MT_SPIDER );
+							new_monster( 176, y, MT_SPIDER );
 							break;
 						case OBJ_SKELETON: 
-							new_monster( 176, (y + 2) << 3, MT_SKELETON );
+							new_monster( 176, y, MT_SKELETON );
 							break;
 					}
-					
+
 					j = level_data[++level_pos];
 				}
 			}

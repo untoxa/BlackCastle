@@ -194,4 +194,53 @@ void enter_title();
 void enter_level();
 void enter_end();
 
+typedef void (*state_handler_t)(void);
+extern state_handler_t state_handlers[];
+
+// level structures
+
+typedef struct level_minor_t {
+    UBYTE bank_map;
+    UBYTE * map;
+    UBYTE * data;
+    UBYTE len;
+    UBYTE music;
+    UBYTE boss_x, boss_y, boss_typ;
+} level_minor_t;
+
+typedef struct level_t {
+    UBYTE bank_tiles;
+    UBYTE * tiles;
+    UBYTE bank_sprites;
+    UBYTE * sprites;
+    UBYTE bank_hud;
+    UBYTE * hud_tiles;
+    UBYTE * hud_map;
+    level_minor_t minor[];
+} level_t;
+
+
+BANKREF_EXTERN(title_tiles)
+BANKREF_EXTERN(title_map)
+BANKREF_EXTERN(sprite_tiles)
+BANKREF_EXTERN(hud_tiles)
+BANKREF_EXTERN(hud_map)
+BANKREF_EXTERN(level1_tiles)
+BANKREF_EXTERN(level1_1_map)
+BANKREF_EXTERN(level1_2_map)
+BANKREF_EXTERN(level1_3_map)
+BANKREF_EXTERN(level1_4_map)
+BANKREF_EXTERN(level2_tiles)
+BANKREF_EXTERN(level2_1_map)
+BANKREF_EXTERN(level2_2_map)
+BANKREF_EXTERN(level2_3_map)
+BANKREF_EXTERN(level2_4_map)
+BANKREF_EXTERN(level3_tiles)
+BANKREF_EXTERN(level3_1_map)
+BANKREF_EXTERN(level3_2_map)
+BANKREF_EXTERN(level3_3_map)
+BANKREF_EXTERN(level3_4_map)
+BANKREF_EXTERN(end_map)
+
+
 #endif
