@@ -4,6 +4,14 @@
 
 #include "global.h"
 
+inline UBYTE translete_env(UBYTE env) {
+#ifdef MEGADUCK
+    return ((UBYTE)(env << 4) | (UBYTE)(env >> 4));
+#else
+	return env;
+#endif
+}
+
 enum notes
 {
 	C3, Db3, D3, Eb3, E3, F3, Gb3, G3, Ab3, A3, Bb3, B3,
@@ -694,7 +702,7 @@ void play_music() BANKED
 				} else {
 					NR10_REG = 0;
 					NR11_REG = inst_ch1;
-					NR12_REG = vol_ch1;
+					NR12_REG = translete_env(vol_ch1);
 					NR13_REG = freq & 0x00FF;
 					NR14_REG = 0x80 | ((freq >> 8) & 0x0007);	
 				}
@@ -723,7 +731,7 @@ void play_music() BANKED
 				NR24_REG = 0;		
 			} else {
 				NR21_REG = inst_ch2;
-				NR22_REG = vol_ch2;
+				NR22_REG = translete_env(vol_ch2);
 				NR23_REG = freq & 0x00FF;
 				NR24_REG = 0x80 | ((freq >> 8) & 0x0007);		
 			}
@@ -753,7 +761,7 @@ void play_music() BANKED
 			} else {
 				NR30_REG = 0x80;
 				NR31_REG = 0xFF;
-				NR32_REG = 0x20;
+				NR32_REG = translete_env(0x20);
 				NR33_REG = freq & 0x00FF;
 				NR34_REG = 0x80 | ((freq >> 8) & 0x0007);	
 			}
@@ -782,8 +790,8 @@ void play_music() BANKED
 					NR44_REG = 0;		
 				} else {
 					NR41_REG = 0xFF;
-					NR42_REG = 0x90;
-					NR43_REG = cwd;
+					NR42_REG = translete_env(0x90);
+					NR43_REG = translete_env(cwd);
 					NR44_REG = 0x80;
 				}
 			}

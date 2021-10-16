@@ -10,6 +10,7 @@ void init_sound() BANKED
 
 void set_music(UBYTE song) BANKED
 {
+    song;
 }
 
 void play_music() BANKED
