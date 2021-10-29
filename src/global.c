@@ -621,7 +621,7 @@ void enter_level()
 	initrand(RAND_SOURCE);
 	init_level();
 	
-	//SHOW_SPRITES;
+//	SHOW_SPRITES;	// set in the LCD ISR
 	DISPLAY_ON;
 	
 	fade_from_white();

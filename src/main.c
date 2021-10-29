@@ -7,7 +7,7 @@ void lcd_isr()
 {
 	if( game_state == GS_LEVEL )
 	{
-		while( STAT_REG & 3 );
+		while(STAT_REG & STATF_LCD);
 		move_bkg(scroll_pos,0);		
 		SHOW_SPRITES;
 		if( shake != 0 )
@@ -67,7 +67,7 @@ void main()
 
 	CRITICAL {
 		LYC_REG = 0x0F;
-		STAT_REG = 0x40;
+		STAT_REG = STATF_LYC;
 		add_LCD(lcd_isr);
 		add_VBL(vbl_isr);
 		set_interrupts( VBL_IFLAG | LCD_IFLAG );

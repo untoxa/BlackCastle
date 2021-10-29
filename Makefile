@@ -9,7 +9,7 @@ LCC = $(GBDK_HOME)bin/lcc
 # They can also be built/cleaned individually: "make gg" and "make gg-clean"
 # Possible are: gb gbc pocket sms gg
 #TARGETS=gb pocket sms gg
-TARGETS=gb megaduck gg sms
+TARGETS=gb megaduck gg sms pocket
 
 # Configure platform specific LCC flags here:
 LCCFLAGS_gb      = -Wl-yt0x19 -Wl-yo4 -Wm-yS -Wm-yn"$(PROJECTNAME)"
