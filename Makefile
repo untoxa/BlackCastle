@@ -25,7 +25,7 @@ LCCFLAGS += -Wl-j
 # LCCFLAGS += -debug # Uncomment to enable debug output
 # LCCFLAGS += -v     # Uncomment for lcc verbose output
 
-CFLAGS = -Wf-Iinclude
+CFLAGS = -Wf-Iinclude -Wf-MMD
 
 # You can set the name of the ROM file here
 PROJECTNAME = blackcastle
@@ -42,6 +42,11 @@ BINS	    = $(OBJDIR)/$(PROJECTNAME).$(EXT)
 CSOURCES    = $(foreach dir,$(SRCDIR),$(notdir $(wildcard $(dir)/*.c))) $(foreach dir,$(SRCPLAT),$(notdir $(wildcard $(dir)/*.c))) $(foreach dir,$(RESDIR),$(notdir $(wildcard $(dir)/*.c)))
 ASMSOURCES  = $(foreach dir,$(SRCDIR),$(notdir $(wildcard $(dir)/*.s))) $(foreach dir,$(SRCPLAT),$(notdir $(wildcard $(dir)/*.s)))
 OBJS        = $(CSOURCES:%.c=$(OBJDIR)/%.o) $(ASMSOURCES:%.s=$(OBJDIR)/%.o)
+
+# Dependencies
+DEPS = $(OBJS:%.o=%.d)
+
+-include $(DEPS)
 
 # Builds all targets sequentially
 all: $(TARGETS)
