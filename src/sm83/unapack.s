@@ -4,15 +4,20 @@
 ; No self-modifying code
 ; Based on z80 version by dwedit/utopian/Metalbrain
 
-; de = source
-; bc = dest
-; call UNAPACK
-
         .area _CODE
 
+; void UNAPACK(const unsigned char * sour, unsigned char * dest) OLDCALL;
+
+.MACRO GETBIT3 COND, ?LBL
+        JR      COND,LBL
+        LD      A,(DE)
+        INC     DE
+        ADC     A,A
+LBL:
+.ENDM
+
 _UNAPACK::
-        PUSH    BC
-        LDA     HL,4(SP)
+        LDA     HL,2(SP)
         LD      A,(HL+)
         LD      E,A
         LD      A,(HL+)
@@ -21,15 +26,13 @@ _UNAPACK::
         LD      C,A
         LD      A,(HL)
         LD      B,A
-        CALL    UNAPACK
-        POP     BC
-        RET
+
+; de = source; bc = dest
 
 UNAPACK::
         LD      A,#0x80
-        LD      (BITS),A
-
 APBRANCH1:
+        LD      (BITS),A
         LD      A,(DE)
         INC     DE
 APLOOP0:
@@ -38,13 +41,16 @@ APLOOP0:
         LD      A,#-1
 APLOOP:
         LD      (DECR),A
-        CALL    AP_GETBIT
+
+        LD      A,(BITS)
+        ADD     A,A
+        GETBIT3 NZ
         JR      NC,APBRANCH1
         ADD     A,A
-        CALL    Z,AP_GETBIT3
+        GETBIT3 NZ
         JR      NC,APBRANCH2
         ADD     A,A
-        CALL    Z,AP_GETBIT3
+        GETBIT3 NZ
         JR      NC,APBRANCH3
         LD      L,A
         LD      H,#0x10
@@ -94,6 +100,7 @@ APBRANCH3:
         LD      D,H
         JR      AP_FINISHUP
 APBRANCH2:
+        LD      (BITS),A
         CALL    AP_GETGAMMA
         DEC     E
         LD      A,(DECR)
@@ -103,19 +110,17 @@ APBRANCH2:
         LD      D,A
         LD      E,(HL)
 
-        PUSH    HL
-        LD      H,D
-        LD      L,E
-        POP     DE
-
-        INC     DE
-
-        LD      A,L
+        LD      A,E
         LD      (OFFSET), A
-        LD      A,H
+        LD      A,D
         LD      (OFFSET+1), A
 
-        PUSH    HL
+        PUSH    DE
+        INC     HL
+
+        LD      D,H
+        LD      E,L
+
         CALL    AP_GETGAMMA_
 
         PUSH    DE
@@ -153,25 +158,32 @@ AP_FINISHUP:
         LD      A,B
         SBC     A,H
         LD      H,A
-AP_FINISHUP2::
+AP_FINISHUP2::   
+        ; LDIR
+        SRL     D
+        RR      E
         INC     D
-LDIR:
-        LD      A,(HL+)
-        LD      (BC),A
-        INC     BC
-        DEC     E
-        JR      NZ, LDIR
-        DEC     D
-        JR      NZ, LDIR
+        INC     E
+        JR      NC, LDIR_CHECK
+        JR      LDIR_NEXT1
+        .IRP    LBL,LDIR_NEXT2,LDIR_NEXT1
+LBL:
+                LD      A,(HL+)
+                LD      (BC),A
+                INC     BC
+        .ENDM 
+LDIR_CHECK:
+        .IRP    REG,E,D
+                DEC     REG
+                JR      NZ, LDIR_NEXT2
+        .ENDM 
         XOR     A
         POP     DE
         JP      APLOOP
 
 AP_R0_GAMMA:
-        PUSH    HL
-        LD      H,D
-        LD      L,E
-        POP     DE
+        LD      D,H
+        LD      E,L
 
         CALL    AP_GETGAMMA_
         PUSH    HL
@@ -182,19 +194,6 @@ AP_R0_GAMMA:
         LD      L,A
 
         JR      AP_FINISHUP
-AP_GETBIT:
-        LD      A,(BITS)
-AP_GETBIT2:
-        ADD     A,A
-        LD      (BITS),A
-        RET     NZ
-AP_GETBIT3:
-        LD      A,(DE)
-        INC     DE
-        ADC     A,A
-AP_GETBIT4:
-        LD      (BITS),A
-        RET
 
 AP_GETGAMMA_:
         LD      A,(BITS)
@@ -203,20 +202,24 @@ AP_GETGAMMA:
 AP_GETGAMMALOOP:
         ADD     HL,HL
         ADD     A,A
-        CALL    Z,AP_GETBIT3
+        GETBIT3 NZ
         JR      NC,AP_GETGAMMALOOP1
         INC     L
 AP_GETGAMMALOOP1:
         ADD     A,A
-        CALL    Z,AP_GETBIT3
+        GETBIT3 NZ
         JR      C,AP_GETGAMMALOOP
 
-        PUSH    HL
-        LD      H,D
-        LD      L,E
-        POP     DE
+        LD      (BITS),A
 
-        JR      AP_GETBIT4
+        LD      A, H
+        LD      H, D
+        LD      D, A
+        LD      A, L
+        LD      L, E
+        LD      E, A
+
+        RET
 
         .area _DATA
 OFFSET: 
