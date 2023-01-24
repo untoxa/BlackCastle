@@ -11,10 +11,9 @@
         .area _CODE
 
 _UNAPACK::
-        POP     HL
-        POP     DE
-        POP     BC
-        PUSH    HL
+        EX      DE, HL
+        LD      B, H
+        LD      C, L
 
 UNAPACK::
         LD      A,#0x80

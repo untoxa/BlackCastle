@@ -17,18 +17,6 @@ LBL:
 .ENDM
 
 _UNAPACK::
-        LDA     HL,2(SP)
-        LD      A,(HL+)
-        LD      E,A
-        LD      A,(HL+)
-        LD      D,A
-        LD      A,(HL+)
-        LD      C,A
-        LD      A,(HL)
-        LD      B,A
-
-; de = source; bc = dest
-
 UNAPACK::
         LD      A,#0x80
 APBRANCH1:
