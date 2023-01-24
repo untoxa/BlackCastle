@@ -1,14 +1,14 @@
 #ifndef _MONSTER
 #define _MONSTER
 
-#define MAX_MONSTER			6
-#define MAX_MONSTER_SHOT	3
+#define MAX_MONSTER         6
+#define MAX_MONSTER_SHOT    3
 
-#define MT_KNIGHT			0
-#define MT_BAT				1
-#define MT_REAPER			2
-#define MT_SPIDER			3
-#define MT_SKELETON			4
+#define MT_KNIGHT           0
+#define MT_BAT              1
+#define MT_REAPER           2
+#define MT_SPIDER           3
+#define MT_SKELETON         4
 
 extern const unsigned char level1_1_data[];
 extern const unsigned char level1_2_data[];

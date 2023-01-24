@@ -14,8 +14,6 @@ _UNAPACK::
         POP     HL
         POP     DE
         POP     BC
-        PUSH    BC
-        PUSH    DE
         PUSH    HL
 
 UNAPACK::

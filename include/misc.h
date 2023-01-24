@@ -1,39 +1,39 @@
 #ifndef _MISC
 #define _MISC
 
-#define MAX_SPRITES			40
-#define MAX_ITEM			4
-#define MAX_PLATFORM 		4
-#define MAX_EXPLOSION		4
-#define MAX_STONE			2
+#define MAX_SPRITES         40
+#define MAX_ITEM            4
+#define MAX_PLATFORM        4
+#define MAX_EXPLOSION       4
+#define MAX_STONE           2
 
-#define SND_SHOT			1
-#define SND_CRYSTAL			2
-#define SND_HEART			3
-#define SND_HIT				4
-#define SND_EXPLOSION		5
-#define SND_WEAPON			6
-#define SND_START			7
-#define SND_DAMAGE			8
-#define SND_DEAD			9
-#define SND_PAUSE			10
-#define SND_BREAK			11
-#define SND_SHAKE			12
+#define SND_SHOT            1
+#define SND_CRYSTAL         2
+#define SND_HEART           3
+#define SND_HIT             4
+#define SND_EXPLOSION       5
+#define SND_WEAPON          6
+#define SND_START           7
+#define SND_DAMAGE          8
+#define SND_DEAD            9
+#define SND_PAUSE           10
+#define SND_BREAK           11
+#define SND_SHAKE           12
 
-#define HUD_WEAPON			0
-#define HUD_LIFE			1
-#define HUD_SCORE			2
-#define HUD_LEVEL			3
+#define HUD_WEAPON          0
+#define HUD_LIFE            1
+#define HUD_SCORE           2
+#define HUD_LEVEL           3
 
-#define IT_CRYSTAL			0
-#define IT_HEART			1
-#define IT_SWORD			2
-#define IT_AXE				3
-#define IT_MACE				4
+#define IT_CRYSTAL          0
+#define IT_HEART            1
+#define IT_SWORD            2
+#define IT_AXE              3
+#define IT_MACE             4
 
-#define PT_FALLING_PLATFORM		0
-#define PT_UPDOWN_PLATFORM		1
-#define PT_LEFTRIGHT_PLATFORM	2	
+#define PT_FALLING_PLATFORM     0
+#define PT_UPDOWN_PLATFORM      1
+#define PT_LEFTRIGHT_PLATFORM   2   
 
 extern const unsigned char candle_tiles[];
 extern const unsigned char title_numbers[];

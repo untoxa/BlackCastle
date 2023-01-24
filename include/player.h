@@ -1,11 +1,11 @@
 #ifndef _PLAYER
 #define _PLAYER
 
-#define MAX_PLAYER_SHOT	3
+#define MAX_PLAYER_SHOT 3
 
-#define PST_SWORD		0
-#define PST_AXE			1
-#define PST_MACE		2
+#define PST_SWORD       0
+#define PST_AXE         1
+#define PST_MACE        2
 
 //player
 extern UBYTE player_x;
