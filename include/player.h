@@ -33,7 +33,7 @@ extern BYTE player_shot_dir[MAX_PLAYER_SHOT];
 extern BYTE player_shot_vel[MAX_PLAYER_SHOT];
 extern UBYTE player_shot_ani[MAX_PLAYER_SHOT];
 
-void update_player_shot() BANKED;
-void update_player() BANKED;
+void update_player_shot(void) BANKED;
+void update_player(void) BANKED;
 
 #endif

@@ -31,7 +31,7 @@ BYTE player_shot_dir[MAX_PLAYER_SHOT];
 BYTE player_shot_vel[MAX_PLAYER_SHOT];
 UBYTE player_shot_ani[MAX_PLAYER_SHOT];
 
-void new_player_shot()
+void new_player_shot(void)
 {
     UBYTE i;
     
@@ -77,7 +77,7 @@ void new_player_shot()
     }
 }
 
-void update_player_shot() BANKED
+void update_player_shot(void) BANKED
 {
     UBYTE tile_x, tile_y;
     UBYTE tile;
@@ -189,7 +189,7 @@ void update_player_shot() BANKED
     }   
 }
 
-void update_player() BANKED
+void update_player(void) BANKED
 {
     UBYTE tile_x1,tile_x2;
     UBYTE tile_y1,tile_y2;

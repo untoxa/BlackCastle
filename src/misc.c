@@ -306,7 +306,7 @@ void set_sound(UBYTE sound)
 #endif
 }
 
-void play_sound()
+void play_sound(void)
 {
 #if defined(NINTENDO)
     if( sound_cnt_ch4 != 0 )
@@ -439,7 +439,7 @@ void play_sound()
 #endif
 }
 
-void fade_from_white()
+void fade_from_white(void)
 {
 #if defined(NINTENDO)
     UBYTE i,j;
@@ -475,7 +475,7 @@ void fade_from_white()
 #endif
 }
 
-void fade_to_white()
+void fade_to_white(void)
 {
 #if defined(NINTENDO)
     UBYTE i,j;
@@ -511,7 +511,7 @@ void fade_to_white()
 #endif
 }
 
-UBYTE get_sprite()
+UBYTE get_sprite(void)
 {
     UBYTE i;    
     
@@ -536,7 +536,7 @@ void clear_sprite(UBYTE i)
     }
 }
 
-void clear_all()
+void clear_all(void)
 {
     UBYTE i;
     
@@ -629,7 +629,7 @@ void new_item(UBYTE x, UBYTE y, UBYTE type)
     }
 }
 
-void update_item()
+void update_item(void)
 {
     UBYTE tile_x, tile_y;
     UBYTE tile;
@@ -738,7 +738,7 @@ void new_platform(UBYTE x, UBYTE y, UBYTE type)
     }
 }
 
-void update_platform()
+void update_platform(void)
 {
     UBYTE i,j;
     
@@ -886,7 +886,7 @@ void new_explosion(UBYTE x, UBYTE y)
     }
 }
 
-void update_explosion()
+void update_explosion(void)
 {
     UBYTE i;
     
@@ -946,7 +946,7 @@ void new_stone(UBYTE x, UBYTE y, BYTE dir)
     }
 }
 
-void update_stone()
+void update_stone(void)
 {
     UBYTE i;
     

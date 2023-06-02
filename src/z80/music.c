@@ -4,7 +4,7 @@
 
 #include "global.h"
 
-void init_sound() BANKED
+void init_sound(void) BANKED
 {
 }
 
@@ -13,14 +13,14 @@ void set_music(UBYTE song) BANKED
     song;
 }
 
-void play_music() BANKED
+void play_music(void) BANKED
 {
 }
 
-void stop_music() BANKED
+void stop_music(void) BANKED
 {
 }
 
-void restart_music() BANKED
+void restart_music(void) BANKED
 {
 }

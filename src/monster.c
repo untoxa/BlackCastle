@@ -426,7 +426,7 @@ void new_monster_shot(UBYTE x, UBYTE y) BANKED
     }   
 }
 
-void update_monster_shot() BANKED
+void update_monster_shot(void) BANKED
 {
     UBYTE tile_x,tile_y;
     UBYTE tile;
@@ -849,7 +849,7 @@ void update_skeleton( UBYTE i )
     }
 }
 
-void update_monster() BANKED
+void update_monster(void) BANKED
 {
     UBYTE i,j;
     UBYTE dmg;

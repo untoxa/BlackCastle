@@ -3,7 +3,7 @@
 #include "global.h"
 
 #if defined(NINTENDO)
-void lcd_isr()
+void lcd_isr(void)
 {
     if( game_state == GS_LEVEL )
     {
@@ -23,7 +23,7 @@ void lcd_isr()
     }
 }
 
-void vbl_isr()
+void vbl_isr(void)
 {
     if( game_state == GS_LEVEL )
     {
@@ -32,7 +32,7 @@ void vbl_isr()
     }
 }
 #elif defined(SEGA)
-void vbl_isr()
+void vbl_isr(void)
 {
     if (_shadow_OAM_OFF) return;
     if( game_state == GS_LEVEL )
@@ -53,7 +53,7 @@ void vbl_isr()
 }
 #endif
 
-void main()
+void main(void)
 {   
     DISPLAY_OFF;
     HIDE_SPRITES;

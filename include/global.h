@@ -190,9 +190,9 @@ extern UBYTE level_len;
 extern UWORD high_score;
 
 //functions
-void enter_title();
-void enter_level();
-void enter_end();
+void enter_title(void);
+void enter_level(void);
+void enter_end(void);
 
 typedef void (*state_handler_t)(void);
 extern state_handler_t state_handlers[];

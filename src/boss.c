@@ -84,7 +84,7 @@ void new_boss(UBYTE x, UBYTE y, UBYTE type) BANKED
     }   
 }
 
-void update_boss_bat()
+void update_boss_bat(void)
 {
     UBYTE i,dmg;
     
@@ -212,7 +212,7 @@ void update_boss_bat()
     }
 }
 
-void update_boss_minotaur()
+void update_boss_minotaur(void)
 {
     UBYTE tile_x, tile_y, tile;
     UWORD pos;
@@ -365,7 +365,7 @@ void update_boss_minotaur()
     }
 }
 
-void update_boss_reaper()
+void update_boss_reaper(void)
 {
     UBYTE i,dmg;
     
@@ -525,7 +525,7 @@ void update_boss_reaper()
     }
 }
 
-void update_boss() BANKED
+void update_boss(void) BANKED
 {
     BYTE x,y;
     

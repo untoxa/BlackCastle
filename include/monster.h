@@ -44,8 +44,8 @@ extern UBYTE monster_shot_spr[MAX_MONSTER_SHOT];
 extern BYTE monster_shot_dir[MAX_MONSTER_SHOT];
 
 void new_monster_shot(UBYTE x, UBYTE y) BANKED;
-void update_monster_shot() BANKED;
+void update_monster_shot(void) BANKED;
 void new_monster(UBYTE x, UBYTE y, UBYTE type) BANKED;
-void update_monster() BANKED;
+void update_monster(void) BANKED;
 
 #endif

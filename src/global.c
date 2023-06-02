@@ -182,7 +182,7 @@ const level_t levels[] = {
     }
 };
 
-void init_title()
+void init_title(void)
 {
     UBYTE i,j;
     UWORD w;
@@ -228,7 +228,7 @@ void init_title()
     
 }
 
-void enter_title()
+void enter_title(void)
 {
     UBYTE i;
     
@@ -266,7 +266,7 @@ void enter_title()
     }   
 }
 
-void init_level()
+void init_level(void)
 {
     UBYTE i;
     UWORD w;
@@ -360,7 +360,7 @@ void init_level()
     level_ani = 0;
 }
 
-void update_level()
+void update_level(void)
 {
     UBYTE i,j,type,y;
     UWORD w;
@@ -468,7 +468,7 @@ void update_level()
     }
 }
 
-void draw_level()
+void draw_level(void)
 {
     UBYTE i;
     
@@ -614,7 +614,7 @@ void draw_level()
     }
 }
 
-void enter_level()
+void enter_level(void)
 {
     UBYTE i;
     
@@ -775,7 +775,7 @@ void enter_level()
     }
 }
 
-void enter_end()
+void enter_end(void)
 {
     UBYTE i,j;
     UWORD w;

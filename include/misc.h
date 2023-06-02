@@ -87,26 +87,26 @@ extern BYTE stone_vel[MAX_STONE];
 //functions
 
 void set_sound(UBYTE sound);
-void play_sound();
+void play_sound(void);
 
-void fade_to_white();
-void fade_from_white();
+void fade_to_white(void);
+void fade_from_white(void);
 
-UBYTE get_sprite();
+UBYTE get_sprite(void);
 void clear_sprite(UBYTE i);
-void clear_all();
+void clear_all(void);
 
 void new_item(UBYTE x, UBYTE y, UBYTE type);
-void update_item();
+void update_item(void);
 
 void new_platform(UBYTE x, UBYTE y, UBYTE type);
-void update_platform();
+void update_platform(void);
 
 void new_explosion(UBYTE x, UBYTE y);
-void update_explosion();
+void update_explosion(void);
 
 void new_stone(UBYTE x, UBYTE y, BYTE dir);
-void update_stone();
+void update_stone(void);
 
 void add_score(UBYTE value);
 void update_hud(UBYTE type);

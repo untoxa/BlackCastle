@@ -9,10 +9,10 @@
 #define LEVEL3_MUSIC    5
 #define END_MUSIC       6
 
-void init_sound() BANKED;
+void init_sound(void) BANKED;
 void set_music(UBYTE song) BANKED;
-void play_music() BANKED;
-void stop_music() BANKED;
-void restart_music() BANKED;
+void play_music(void) BANKED;
+void stop_music(void) BANKED;
+void restart_music(void) BANKED;
 
 #endif

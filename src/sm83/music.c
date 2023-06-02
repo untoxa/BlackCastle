@@ -469,7 +469,7 @@ const unsigned char *music_data_ch4;
 const unsigned char *music_ptr_ch4;
 UBYTE music_cnt_ch4;
 
-void init_sound() BANKED
+void init_sound(void) BANKED
 {
     UBYTE i;
     
@@ -675,7 +675,7 @@ void set_music(UBYTE song) BANKED
     }
 }
 
-void play_music() BANKED
+void play_music(void) BANKED
 {
     UWORD freq;
     UBYTE cwd;
@@ -804,7 +804,7 @@ void play_music() BANKED
     }
 }
 
-void stop_music() BANKED
+void stop_music(void) BANKED
 {
     NR12_REG = 0;
     NR14_REG = 0;
@@ -821,7 +821,7 @@ void stop_music() BANKED
     music_play = FALSE;
 }
 
-void restart_music() BANKED
+void restart_music(void) BANKED
 {
     music_play = TRUE;
     
