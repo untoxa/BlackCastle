@@ -51,13 +51,62 @@ void vbl_isr(void)
         }
     }
 }
+
+void lcd_isr(void)
+{
+}
+
+#elif defined(NINTENDO_NES)
+void vbl_isr(void)
+{
+    if( game_state == GS_LEVEL )
+    {
+        move_bkg(0,0);
+        HIDE_SPRITES;
+        if( shake != 0 )
+        {
+            shake--;
+            if( (shake & 1) == 1 )
+            {
+                scroll_pos_with_shake = (UBYTE)scroll_pos + 1;
+            } else {
+                scroll_pos_with_shake = (UBYTE)scroll_pos - 1;
+            }
+        } else {
+            scroll_pos_with_shake = (UBYTE)scroll_pos;
+        }
+    }
+    else
+    {
+        scroll_pos_with_shake = (UBYTE)scroll_pos;
+    }
+}
+
+void lcd_isr(void)
+{
+    // Write directly to hardware scroll registers (only first write will have an effect)
+    PPUSCROLL = scroll_pos_with_shake;
+    PPUSCROLL = 0; // 2nd write (dummy)
+    if( game_state == GS_LEVEL )
+    {
+        //move_bkg(scroll_pos,0);
+        // Write directly to hardware register PPUMASK instead of shadow register
+        PPUMASK = shadow_PPUMASK | PPUMASK_SHOW_SPR;
+    }
+}
+#endif
+
+#if defined(NINTENDO_NES)
+extern uint8_t _lcd_scanline;
 #endif
 
 void main(void)
 {   
     DISPLAY_OFF;
     HIDE_SPRITES;
+#if defined(NINTENDO)
     HIDE_WIN;
+#endif
     HIDE_BKG;
     
     SPRITES_8x16;
@@ -79,6 +128,10 @@ void main(void)
         set_interrupts( VBL_IFLAG | LCD_IFLAG );
     }
     __WRITE_VDP_REG(VDP_R0, __READ_VDP_REG(VDP_R0) | R0_HSCRL_INH | R0_LCB);
+#elif defined(NINTENDO_NES)
+    add_VBL(vbl_isr);
+    set_sprite_palette_entry(0,2, RGB8(255, 255, 255));
+    _lcd_scanline = 8 * (2 + VIEWPORT_Y_OFS);
 #endif
     init_sound();
     

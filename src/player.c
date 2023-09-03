@@ -139,7 +139,7 @@ void update_player_shot(void) BANKED
             
             tile_x = ((player_shot_x[i] + 4 + scroll_pos) >> 3) - 1;
             tile_y = ((player_shot_y[i] + 3) >> 3) - 2;
-            pos = (tile_x << 4) + tile_y;
+            pos = BUFPOS(tile_x, tile_y);
             if( tile_y > 15 )
             {
                 tile = 0;
@@ -175,7 +175,7 @@ void update_player_shot(void) BANKED
                     if( (tile == 19) || (tile == 20) )
                     {
                         buf[pos] = 0;
-                        set_bkg_tiles(VIEWPORT_X_OFS + tile_x & 31,tile_y + 2,1,1,&buf[pos]);
+                        set_bkg_tiles(VIEWPORT_X_OFS + tile_x & 31,tile_y + 2 + VIEWPORT_Y_OFS,1,1,&buf[pos]);
                         tile_x = ((tile_x + 1) << 3) - scroll_pos;
                         tile_y = (tile_y + 2) << 3;
                         new_stone(tile_x,tile_y,player_shot_dir[i]);
@@ -205,8 +205,8 @@ void update_player(void) BANKED
         tile_y1 = (player_y >> 3) - 2;
         tile_y2 = ((player_y + 15) >> 3) - 2;
         //tile_y3 = ((player_y + 8) >> 3) - 2;
-        pos1 = (tile_x1 << 4) + tile_y1;
-        pos2 = (tile_x1 << 4) + tile_y2;
+        pos1 = BUFPOS(tile_x1, tile_y1);
+        pos2 = BUFPOS(tile_x1, tile_y2);
         //pos3 = (tile_x1 << 4) + tile_y3;
         
         if( tile_y1 > 15 )
@@ -278,8 +278,8 @@ void update_player(void) BANKED
         tile_y1 = (player_y >> 3) - 2;
         tile_y2 = ((player_y + 15) >> 3) - 2;
         //tile_y3 = ((player_y + 8) >> 3) - 2;
-        pos1 = (tile_x1 << 4) + tile_y1;
-        pos2 = (tile_x1 << 4) + tile_y2;
+        pos1 = BUFPOS(tile_x1, tile_y1);
+        pos2 = BUFPOS(tile_x1, tile_y2);
         //pos3 = (tile_x1 << 4) + tile_y3;
         
         if( tile_y1 > 15 )
@@ -397,10 +397,10 @@ void update_player(void) BANKED
     tile_x1 = ((player_x + 4 + scroll_pos) >> 3) - 1;
     tile_x2 = ((player_x + 11 + scroll_pos) >> 3) - 1;
     
-    pos1 = (tile_x1 << 4) + tile_y1;
-    pos2 = (tile_x2 << 4) + tile_y1;
-    pos3 = (tile_x1 << 4) + tile_y2;
-    pos4 = (tile_x2 << 4) + tile_y2;
+    pos1 = BUFPOS(tile_x1, tile_y1);
+    pos2 = BUFPOS(tile_x2, tile_y1);
+    pos3 = BUFPOS(tile_x1, tile_y2);
+    pos4 = BUFPOS(tile_x2, tile_y2);
     
     if( tile_y1 > 15 )
     {
