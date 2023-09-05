@@ -49,6 +49,9 @@
     #define RAND_SOURCE DIV_REG
 #endif
 
+// How many columns of map to preload into buf past the right of the screen
+#define BUF_PRELOAD_WIDTH 8
+
 #define UPDATE_KEYS()   old_input = input; input = joypad()
 #define KEY_PRESSED(K)  (input & (K))
 #define KEY_DEBOUNCE(K) ((input & (K)) && (old_input & (K)))
@@ -269,11 +272,13 @@ inline void update_column(UBYTE pos)
 {
     UBYTE j;
     UBYTE i = (tile_pos + VIEWPORT_WIDTH + 0) & (DEVICE_SCREEN_BUFFER_WIDTH - 1);
-    UWORD w = (pos + VIEWPORT_WIDTH + 0) << 4;
+    UWORD w = (pos + VIEWPORT_WIDTH + BUF_PRELOAD_WIDTH) << 4;
     UWORD wmod = w & 0x1F0;
     SET_BANK(g_current_map_bank);
     for(j = 0; j < 16; j++)
         buf[wmod+j] = g_current_map[w+j];
+    w = (pos + VIEWPORT_WIDTH + 0) << 4;
+    wmod = w & 0x1F0;
     set_bkg_tiles((VIEWPORT_X_OFS + i) & (DEVICE_SCREEN_BUFFER_WIDTH - 1),
                   VIEWPORT_Y_OFS + 2,
                   1,

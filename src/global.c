@@ -401,18 +401,21 @@ void init_level(void)
 
     //background
     w = 0;
-    for( i = (DEVICE_SCREEN_BUFFER_WIDTH == DEVICE_SCREEN_WIDTH) ? 0 : 0; i != VIEWPORT_WIDTH+1; i++ )
+    for( i = 0; i != VIEWPORT_WIDTH+1 + BUF_PRELOAD_WIDTH; i++ )
     {
         for(j = 0; j < 16; j++)
         {
             UBYTE B = current_stage->map[w+j];
             buf[(w & 0x1F0)+j] = B;
         }
-        set_bkg_tiles((VIEWPORT_X_OFS + i) & (DEVICE_SCREEN_BUFFER_WIDTH - 1),
-                      2 + VIEWPORT_Y_OFS,
-                      1,
-                      16,
-                      &buf[w & 0x1F0]);
+        if(i < VIEWPORT_WIDTH+1)
+        {
+            set_bkg_tiles((VIEWPORT_X_OFS + i) & (DEVICE_SCREEN_BUFFER_WIDTH - 1),
+                          2 + VIEWPORT_Y_OFS,
+                          1,
+                          16,
+                          &buf[w & 0x1F0]);
+        }
         w += 16;
     }
     if(VIEWPORT_X_OFS != 0)
