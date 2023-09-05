@@ -444,7 +444,6 @@ void update_level(void)
     UWORD w;
     
     scroll = 0;
-    //PPUMASK = 0x38; //PROFILING HACK
     SET_BANK(2);
     update_player();
     SET_BANK(1);
@@ -482,21 +481,18 @@ void update_level(void)
         tile_cnt += scroll;
         if( (tile_cnt & 8) == 8 )
         {
-            //PPUMASK = 0x98; //PROFILING HACK
             tile_cnt -= 8;
             tile_pos++;
             if( tile_pos < 236 )
             {
                 update_column(tile_pos);
             }
-            //PPUMASK = 0xB8; //PROFILING HACK
 #if defined(MASTERSYSTEM) || defined(NINTENDO_NES)
             if(VIEWPORT_X_OFS != 0)
             {
                 fill_bkg_rect(((tile_pos + VIEWPORT_X_OFS - 1) & 31), 2 + VIEWPORT_Y_OFS,1,16,0);
             }
 #endif
-            //PPUMASK = 0x58; //PROFILING HACK
             if( level_min != 4)
             {
                 i = tile_pos + VIEWPORT_WIDTH+1;
@@ -554,13 +550,11 @@ void update_level(void)
             }
         }
     }
-    //PPUMASK = 0xD8; //PROFILING HACK
 }
 
 void draw_level(void)
 {
     UBYTE i;
-    //PPUMASK = 0xD9; //PROFILING HACK
     //player
     if( (player_dmg & 2) == 0 )
     {
@@ -701,7 +695,6 @@ void draw_level(void)
             move_sprite_clip(stone_spr[i],   SPRITE_OFS_X + stone_x[i],  SPRITE_OFS_Y + stone_y[i] + 16);
         }
     }
-    //PPUMASK = 0x18; //PROFILING HACK
 }
 
 void lcd_isr(void);
@@ -866,9 +859,7 @@ void enter_level(void)
             game_state = GS_TITLE;
         }
         
-        //PPUMASK = 0x18;  //PROFILING HACK
         wait_vbl_done();
-        //PPUMASK = 0x78; //PROFILING HACK
     }
     remove_LCD(lcd_isr);
 }
