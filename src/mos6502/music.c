@@ -63,7 +63,7 @@ UBYTE vol_ch4;
 UBYTE tim_ch4;
 UBYTE len_ch4;
 
-void init_sound() BANKED
+void init_sound(void) BANKED
 {
 	//sound init
 	_SND4015 = 0x0F; // Enable all 4 channels
@@ -230,7 +230,7 @@ void set_music(UBYTE song) BANKED
 // Calling this at 60Hz will be close-enough to the
 // 64Hz update rate the GB hardware envelope updates at.
 //
-inline void emulate_gb_volume_envelope()
+inline void emulate_gb_volume_envelope(void)
 {
     // Emulate GB hardware envelope with code
     if(tim_ch1 && --tim_ch1 == 0)
@@ -265,7 +265,7 @@ inline void emulate_gb_volume_envelope()
     _SND400C = env_ch4 | 0x30;
 }
 
-void play_music() BANKED
+void play_music(void) BANKED
 {
 	UWORD freq;
 	UBYTE cwd;
@@ -398,7 +398,7 @@ void play_music() BANKED
     emulate_gb_volume_envelope();
 }
 
-void stop_music() BANKED
+void stop_music(void) BANKED
 {
     shadow4000 = 0x10;
     _SND4000 = shadow4000;
@@ -408,7 +408,7 @@ void stop_music() BANKED
 	music_play = FALSE;
 }
 
-void restart_music() BANKED
+void restart_music(void) BANKED
 {
 	music_play = TRUE;
 	

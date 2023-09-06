@@ -55,6 +55,7 @@ extern const UWORD frequency[];
 
 inline void set_ch1_regs(uint8_t nr10, uint8_t nr11, uint8_t nr12, uint8_t note, uint8_t nr14)
 {
+    nr14;
     UWORD freq = frequency[note];
     shadow4000 = (nr11 & 0xC0) | (nr12 >> 4) | 0x30;
     env_ch1 = nr12 >> 4;
@@ -77,6 +78,7 @@ inline void set_ch1_regs(uint8_t nr10, uint8_t nr11, uint8_t nr12, uint8_t note,
 
 inline void set_ch4_regs(uint8_t nr41, uint8_t nr42, uint8_t tone, uint8_t nr44)
 {
+    nr44;
     env_ch4 = nr42 >> 4;
     vol_ch4 = nr42;
     tim_ch4 = nr42 & 0x7;

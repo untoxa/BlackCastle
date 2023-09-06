@@ -11,6 +11,7 @@
 
 void init_sound(void) BANKED;
 void set_sound(UBYTE sound) NONBANKED;
+void play_sound(void) NONBANKED;
 void set_music(UBYTE song) BANKED;
 void play_music(void) BANKED;
 void stop_music(void) BANKED;

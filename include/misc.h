@@ -97,7 +97,7 @@ void fade_from_white(void);
 UBYTE get_sprite(void);
 void clear_sprite(UBYTE i);
 void clear_sprites(UBYTE starting_index);
-void clear_all_objects();
+void clear_all_objects(void);
 
 inline void clear_all(void)
 {

@@ -276,7 +276,7 @@ void enter_title(void)
 // * Hides sprites / scrolling seam on right side of viewport with 8 sprites
 // * Hides sprites scrolling off lower edge of screen with 15 sprites
 //
-inline UBYTE add_clipping_sprites()
+inline UBYTE add_clipping_sprites(void)
 {
     UBYTE i = 0, spr_idx = 0;
 #if defined(CLIP_SPRITES_X)    
@@ -441,7 +441,6 @@ void init_level(void)
 void update_level(void)
 {
     UBYTE i,j,type,y;
-    UWORD w;
     
     scroll = 0;
     SET_BANK(2);

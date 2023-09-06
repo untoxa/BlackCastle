@@ -51,7 +51,7 @@ void clear_sprites(UBYTE starting_index) NONBANKED
     }
 }
 
-void clear_all_objects() NONBANKED
+void clear_all_objects(void) NONBANKED
 {
     UBYTE i;
        
