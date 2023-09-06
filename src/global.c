@@ -16,12 +16,13 @@ UBYTE old_bank;
 //background
 BYTE scroll;
 UWORD scroll_pos;
+UBYTE scroll_pos_with_shake;
 UBYTE tile_cnt;
 UBYTE tile_pos;
 UBYTE shake;
 
-//buffer
-UBYTE buf[4096];
+// Rolling buffer storing 32 columns of the level
+UBYTE buf[512];
 
 //level
 const unsigned char *level_data;
@@ -40,7 +41,13 @@ UBYTE game_over_spr3;
 //high score
 UWORD high_score;
 
-state_handler_t state_handlers[] = {
+// Global map pointer and map bank, used by update_column
+UBYTE* g_current_map;
+UBYTE g_current_map_bank;
+
+UBYTE g_num_clipping_sprites;
+
+const state_handler_t state_handlers[] = {
     enter_title, enter_level, enter_end 
 };
 
@@ -207,14 +214,11 @@ void init_title(void)
     level_min = 1;
     
     //background
-    UNAPACK(title_tiles, buf);
-    set_bkg_data(0,177,buf);
-    
-    UNAPACK(title_map, buf);
+    set_bkg_data(0,177, title_tiles);
     w = 0;
     for( i = 0; i != 20; i++ )
     {
-        set_bkg_tiles(VIEWPORT_X_OFS + i,0,1,18,&buf[w]);
+        set_bkg_tiles(VIEWPORT_X_OFS + i, VIEWPORT_Y_OFS, 1, 18, &title_map[w]);
         w += 18;
     }
     move_bkg(0,0);
@@ -223,7 +227,7 @@ void init_title(void)
     for( i = 0; i != 4; i++ )
     {
         j = (high_score >> (i<<2)) & 0x0F;
-        set_bkg_tiles(VIEWPORT_X_OFS + 10-i,17,1,1,&title_numbers[j]);  
+        set_bkg_tiles(VIEWPORT_X_OFS + 10-i, VIEWPORT_Y_OFS + 17,1,1,&title_numbers[j]);
     }
     
 }
@@ -266,25 +270,78 @@ void enter_title(void)
     }   
 }
 
+//
+// Function that adds blank sprites on wider-screen systems (NES/SMS)
+// * Hides sprites / scrolling seam on left side of viewport with 8 sprites
+// * Hides sprites / scrolling seam on right side of viewport with 8 sprites
+// * Hides sprites scrolling off lower edge of screen with 15 sprites
+//
+inline UBYTE add_clipping_sprites()
+{
+    UBYTE i = 0, spr_idx = 0;
+#if defined(CLIP_SPRITES_X)    
+    // Hiding of right scroll seam (only on non-boss levels)
+    if(level_min != 4)
+    {
+        for(i = 0; i < 8; i++, spr_idx++)
+        {
+            get_sprite();
+            set_sprite_tile(spr_idx, 0xFE + 1);
+            move_sprite(spr_idx, (VIEWPORT_X_OFS + VIEWPORT_WIDTH + 0) << 3, (i << 4) + ((2 + VIEWPORT_Y_OFS) << 3) - 1);
+        }
+    }
+#endif
+    // Hiding of sprites below GB screen
+    // Only 8 are needed on NES/Famicom. But the AVS's 15-sprite mode might require up to 15.
+#if defined(CLIP_SPRITES_Y)
+    for(i = 0; i < 15; i++, spr_idx++)
+    {
+        get_sprite();
+        set_sprite_tile(spr_idx, 0xFE + 1);
+        move_sprite(spr_idx, (VIEWPORT_X_OFS + i) << 3, ((VIEWPORT_Y_OFS + VIEWPORT_HEIGHT) << 3) - 1);
+    }
+#endif
+#if defined(CLIP_SPRITES_X)
+    // Hiding of left scroll seam (only on non-boss levels)
+    if(level_min != 4)
+    {
+        for(i = 0; i < 8; i++, spr_idx++)
+        {
+            get_sprite();
+            set_sprite_tile(spr_idx, 0xFE + 1);
+            move_sprite(spr_idx, (VIEWPORT_X_OFS - 1) << 3, (i << 4) + ((2 + VIEWPORT_Y_OFS) << 3) - 1);
+        }
+    }
+#endif
+    return spr_idx;
+}
+
 void init_level(void)
 {
-    UBYTE i;
+    UBYTE i, j;
     UWORD w;
     
     const level_t * current_level = &levels[level_maj - 1];
     const level_minor_t * current_stage = &(current_level->minor[level_min - 1]);
+    g_current_map = current_stage->map;
+    g_current_map_bank = current_stage->bank_map;
 
-    fill_bkg_rect(DEVICE_SCREEN_X_OFFSET, DEVICE_SCREEN_Y_OFFSET, DEVICE_SCREEN_WIDTH, DEVICE_SCREEN_HEIGHT, 0);
+    fill_bkg_rect(DEVICE_SCREEN_X_OFFSET, DEVICE_SCREEN_Y_OFFSET + VIEWPORT_Y_OFS, DEVICE_SCREEN_WIDTH, DEVICE_SCREEN_HEIGHT, 0);
 
     //sprites
     SET_BANK(current_level->bank_sprites);
-    UNAPACK(current_level->sprites, buf);
 #ifdef SEGA
     set_2bpp_palette(COMPAT_PALETTE(0,1,4,3));
 #endif
-    set_sprite_data(0,ST_LAST,buf);
+    set_sprite_data(0,ST_LAST,current_level->sprites);
     
+#ifdef NINTENDO_NES
+    set_sprite_data(0xFE, 2, scroll_seam_hide_tile);
+#endif
+
     clear_all();
+    
+    g_num_clipping_sprites = add_clipping_sprites();
     
     //player
     player_x = 32;
@@ -303,20 +360,23 @@ void init_level(void)
     set_sprite_tile(player_spr0,ST_PLAYER_IDLE0);
     set_sprite_tile(player_spr1,ST_PLAYER_IDLE1);
     
-    move_sprite(player_spr0,    SPRITE_OFS_X + player_x,    SPRITE_OFS_Y + player_y+16);
-    move_sprite(player_spr1,    SPRITE_OFS_X + player_x+8,  SPRITE_OFS_Y + player_y+16);
+    move_sprite_clip(player_spr0,    SPRITE_OFS_X + player_x,    SPRITE_OFS_Y + player_y+16);
+    move_sprite_clip(player_spr1,    SPRITE_OFS_X + player_x+8,  SPRITE_OFS_Y + player_y+16);
     
     //hud
     SET_BANK(current_level->bank_hud);
-    UNAPACK(current_level->hud_tiles, buf);
 #ifdef SEGA
     set_2bpp_palette(COMPAT_PALETTE(0,1,2,3));
 #endif
-    set_bkg_data(32,51,buf);
+    set_bkg_data(32,51, current_level->hud_tiles);
     w = 0;
     for( i = 0; i != 20; i++ )
     {
-        set_bkg_tiles(VIEWPORT_X_OFS + i,0,1,2,&(current_level->hud_map[w]));
+        set_bkg_tiles(VIEWPORT_X_OFS + i,
+                      VIEWPORT_Y_OFS,
+                      1,
+                      2,
+                      &(current_level->hud_map[w]));
         w += 2;
     }
     update_hud(HUD_LIFE);
@@ -326,12 +386,10 @@ void init_level(void)
 
     // level tiles
     SET_BANK(current_level->bank_tiles);
-    UNAPACK(current_level->tiles, buf);
-    set_bkg_data(0,32,buf);
+    set_bkg_data(0, 32, current_level->tiles);
 
     // level stage maps, data and settings 
     SET_BANK(current_stage->bank_map);
-    UNAPACK(current_stage->map, buf);
     level_data = current_stage->data;
     level_len = current_stage->len;
 
@@ -343,10 +401,30 @@ void init_level(void)
 
     //background
     w = 0;
-    for( i = 0; i != 22; i++ )
+    for( i = 0; i != VIEWPORT_WIDTH+1 + BUF_PRELOAD_WIDTH; i++ )
     {
-        set_bkg_tiles(VIEWPORT_X_OFS + i,2,1,16,&buf[w]);
+        for(j = 0; j < 16; j++)
+        {
+            UBYTE B = current_stage->map[w+j];
+            buf[(w & 0x1F0)+j] = B;
+        }
+        if(i < VIEWPORT_WIDTH+1)
+        {
+            set_bkg_tiles((VIEWPORT_X_OFS + i) & (DEVICE_SCREEN_BUFFER_WIDTH - 1),
+                          2 + VIEWPORT_Y_OFS,
+                          1,
+                          16,
+                          &buf[w & 0x1F0]);
+        }
         w += 16;
+    }
+    if(VIEWPORT_X_OFS != 0)
+    {
+        fill_bkg_rect(VIEWPORT_X_OFS - 1,
+                      2 + VIEWPORT_Y_OFS,
+                      1,
+                      16,
+                      0);
     }
     move_bkg(0,0);
     scroll_pos = 0;
@@ -366,21 +444,27 @@ void update_level(void)
     UWORD w;
     
     scroll = 0;
-    
     SET_BANK(2);
     update_player();
+    SET_BANK(1);
     update_platform();
-    
+
+    SET_BANK(2);
     update_player_shot();
+    SET_BANK(1);
     update_item();
+    SET_BANK(2);
     update_monster();
     
+    SET_BANK(3);
     update_boss();
+    SET_BANK(2);
     
     update_monster_shot();
+    SET_BANK(1);
     update_explosion();
     update_stone();
-
+    SET_BANK(2);
     //candel
     level_ani++;
     if( (level_ani & 8) == 0 )
@@ -399,19 +483,19 @@ void update_level(void)
         {
             tile_cnt -= 8;
             tile_pos++;
-            i = (tile_pos + 21) & 31;
-            w = (tile_pos + 21) << 4;
-            
-            if(  tile_pos < 235 )
-            {   
-                set_bkg_tiles(VIEWPORT_X_OFS + i,2,1,16,&buf[w]);
-            }
-#ifdef MASTERSYSTEM
-            fill_bkg_rect((tile_pos & 31),2,1,16,0);
-#endif
-            if( level_min != 4 )
+            if( tile_pos < 236 )
             {
-                i = tile_pos + 21;
+                update_column(tile_pos);
+            }
+#if defined(MASTERSYSTEM) || defined(NINTENDO_NES)
+            if(VIEWPORT_X_OFS != 0)
+            {
+                fill_bkg_rect(((tile_pos + VIEWPORT_X_OFS - 1) & 31), 2 + VIEWPORT_Y_OFS,1,16,0);
+            }
+#endif
+            if( level_min != 4)
+            {
+                i = tile_pos + VIEWPORT_WIDTH+1;
                 j = level_data[level_pos];
                 while( i == j )
                 {
@@ -421,43 +505,43 @@ void update_level(void)
                     switch( type )
                     {
                         case OBJ_CRYSTAL:
-                            new_item( 176, y, IT_CRYSTAL );
+                            new_item( ENEMY_SPAWN_POS_X, y, IT_CRYSTAL );
                             break;
                         case OBJ_HEART: 
-                            new_item( 176, y, IT_HEART );
+                            new_item( ENEMY_SPAWN_POS_X, y, IT_HEART );
                             break;
                         case OBJ_SWORD: 
-                            new_item( 176, y, IT_SWORD );
+                            new_item( ENEMY_SPAWN_POS_X, y, IT_SWORD );
                             break;
                         case OBJ_AXE:
-                            new_item( 176, y, IT_AXE );
+                            new_item( ENEMY_SPAWN_POS_X, y, IT_AXE );
                             break;
                         case OBJ_MACE:
-                            new_item( 176, y, IT_MACE );
+                            new_item( ENEMY_SPAWN_POS_X, y, IT_MACE );
                             break;  
                         case OBJ_FALLING_PLATFORM: 
-                            new_platform( 176, y, PT_FALLING_PLATFORM );
+                            new_platform( ENEMY_SPAWN_POS_X, y, PT_FALLING_PLATFORM );
                             break;
                         case OBJ_UPDOWN_PLATFORM:
-                            new_platform( 176, y, PT_UPDOWN_PLATFORM );
+                            new_platform( ENEMY_SPAWN_POS_X, y, PT_UPDOWN_PLATFORM );
                             break;
                         case OBJ_LEFTRIGHT_PLATFORM:
-                            new_platform( 176, y, PT_LEFTRIGHT_PLATFORM );
+                            new_platform( ENEMY_SPAWN_POS_X, y, PT_LEFTRIGHT_PLATFORM );
                             break;
                         case OBJ_KNIGHT: 
-                            new_monster( 176, y, MT_KNIGHT );
+                            new_monster( ENEMY_SPAWN_POS_X, y, MT_KNIGHT );
                             break;
                         case OBJ_BAT: 
-                            new_monster( 176, y, MT_BAT );
+                            new_monster( ENEMY_SPAWN_POS_X, y, MT_BAT );
                             break;
                         case OBJ_REAPER: 
-                            new_monster( 176, y, MT_REAPER );
+                            new_monster( ENEMY_SPAWN_POS_X, y, MT_REAPER );
                             break;
                         case OBJ_SPIDER: 
-                            new_monster( 176, y, MT_SPIDER );
+                            new_monster( ENEMY_SPAWN_POS_X, y, MT_SPIDER );
                             break;
                         case OBJ_SKELETON: 
-                            new_monster( 176, y, MT_SKELETON );
+                            new_monster( ENEMY_SPAWN_POS_X, y, MT_SKELETON );
                             break;
                     }
 
@@ -471,12 +555,11 @@ void update_level(void)
 void draw_level(void)
 {
     UBYTE i;
-    
     //player
     if( (player_dmg & 2) == 0 )
     {
-        move_sprite(player_spr0,    SPRITE_OFS_X + player_x,    SPRITE_OFS_Y + player_y + 16);
-        move_sprite(player_spr1,    SPRITE_OFS_X + player_x+8,  SPRITE_OFS_Y + player_y + 16);
+        move_sprite_clip(player_spr0,    SPRITE_OFS_X + player_x,    SPRITE_OFS_Y + player_y + 16);
+        move_sprite_clip(player_spr1,    SPRITE_OFS_X + player_x+8,  SPRITE_OFS_Y + player_y + 16);
     } else {
         hide_sprite(player_spr0);
         hide_sprite(player_spr1);       
@@ -491,7 +574,7 @@ void draw_level(void)
     {
         if( player_shot_act[i] == TRUE )
         {
-            move_sprite(player_shot_spr[i], SPRITE_OFS_X + player_shot_x[i],    SPRITE_OFS_Y + player_shot_y[i] + 16);
+            move_sprite_clip(player_shot_spr[i], SPRITE_OFS_X + player_shot_x[i],    SPRITE_OFS_Y + player_shot_y[i] + 16);
         }
     }
     
@@ -500,7 +583,7 @@ void draw_level(void)
     {
         if( item_act[i] == TRUE )
         {
-            move_sprite(item_spr[i],    SPRITE_OFS_X + item_x[i],   SPRITE_OFS_Y + item_y[i] + 16);
+            move_sprite_clip(item_spr[i],    SPRITE_OFS_X + item_x[i],   SPRITE_OFS_Y + item_y[i] + 16);
         }
     }
     
@@ -509,8 +592,8 @@ void draw_level(void)
     {
         if( platform_act[i] == TRUE )
         {
-            move_sprite(platform_spr0[i],   SPRITE_OFS_X + platform_x[i],   SPRITE_OFS_Y + platform_y[i] + 16);
-            move_sprite(platform_spr1[i],   SPRITE_OFS_X + platform_x[i]+8, SPRITE_OFS_Y + platform_y[i] + 16);
+            move_sprite_clip(platform_spr0[i],   SPRITE_OFS_X + platform_x[i],   SPRITE_OFS_Y + platform_y[i] + 16);
+            move_sprite_clip(platform_spr1[i],   SPRITE_OFS_X + platform_x[i]+8, SPRITE_OFS_Y + platform_y[i] + 16);
         }
     }
     
@@ -521,8 +604,8 @@ void draw_level(void)
         {
             if( (monster_dmg[i] & 2) == 0 )
             {
-                move_sprite(monster_spr0[i],    SPRITE_OFS_X + monster_x[i],        SPRITE_OFS_Y + monster_y[i] + 16);
-                move_sprite(monster_spr1[i],    SPRITE_OFS_X + monster_x[i] + 8,    SPRITE_OFS_Y + monster_y[i] + 16);
+                move_sprite_clip(monster_spr0[i],    SPRITE_OFS_X + monster_x[i],        SPRITE_OFS_Y + monster_y[i] + 16);
+                move_sprite_clip(monster_spr1[i],    SPRITE_OFS_X + monster_x[i] + 8,    SPRITE_OFS_Y + monster_y[i] + 16);
             } else {
                 hide_sprite(monster_spr0[i]);
                 hide_sprite(monster_spr1[i]);
@@ -538,23 +621,23 @@ void draw_level(void)
             switch( boss_typ )
             {
                 case BT_BAT:
-                    move_sprite(boss_spr0,  SPRITE_OFS_X + boss_x,      SPRITE_OFS_Y + boss_y + 16);
-                    move_sprite(boss_spr1,  SPRITE_OFS_X + boss_x + 8,  SPRITE_OFS_Y + boss_y + 16);
-                    move_sprite(boss_spr2,  SPRITE_OFS_X + boss_x + 16, SPRITE_OFS_Y + boss_y + 16);
+                    move_sprite_clip(boss_spr0,  SPRITE_OFS_X + boss_x,      SPRITE_OFS_Y + boss_y + 16);
+                    move_sprite_clip(boss_spr1,  SPRITE_OFS_X + boss_x + 8,  SPRITE_OFS_Y + boss_y + 16);
+                    move_sprite_clip(boss_spr2,  SPRITE_OFS_X + boss_x + 16, SPRITE_OFS_Y + boss_y + 16);
                     break;
                 case BT_MINOTAUR:
-                    move_sprite(boss_spr0,  SPRITE_OFS_X + boss_x,      SPRITE_OFS_Y + boss_y + 16);
-                    move_sprite(boss_spr1,  SPRITE_OFS_X + boss_x + 8,  SPRITE_OFS_Y + boss_y + 16);
-                    move_sprite(boss_spr2,  SPRITE_OFS_X + boss_x + 16, SPRITE_OFS_Y + boss_y + 16);
-                    move_sprite(boss_spr3,  SPRITE_OFS_X + boss_x,      SPRITE_OFS_Y + boss_y + 32);
-                    move_sprite(boss_spr4,  SPRITE_OFS_X + boss_x + 8,  SPRITE_OFS_Y + boss_y + 32);
-                    move_sprite(boss_spr5,  SPRITE_OFS_X + boss_x + 16, SPRITE_OFS_Y + boss_y + 32);
+                    move_sprite_clip(boss_spr0,  SPRITE_OFS_X + boss_x,      SPRITE_OFS_Y + boss_y + 16);
+                    move_sprite_clip(boss_spr1,  SPRITE_OFS_X + boss_x + 8,  SPRITE_OFS_Y + boss_y + 16);
+                    move_sprite_clip(boss_spr2,  SPRITE_OFS_X + boss_x + 16, SPRITE_OFS_Y + boss_y + 16);
+                    move_sprite_clip(boss_spr3,  SPRITE_OFS_X + boss_x,      SPRITE_OFS_Y + boss_y + 32);
+                    move_sprite_clip(boss_spr4,  SPRITE_OFS_X + boss_x + 8,  SPRITE_OFS_Y + boss_y + 32);
+                    move_sprite_clip(boss_spr5,  SPRITE_OFS_X + boss_x + 16, SPRITE_OFS_Y + boss_y + 32);
                     break;
                 case BT_REAPER:
-                    move_sprite(boss_spr0,  SPRITE_OFS_X + boss_x,      SPRITE_OFS_Y + boss_y + 16);
-                    move_sprite(boss_spr1,  SPRITE_OFS_X + boss_x + 8,  SPRITE_OFS_Y + boss_y + 16);
-                    move_sprite(boss_spr2,  SPRITE_OFS_X + boss_x,      SPRITE_OFS_Y + boss_y + 32);
-                    move_sprite(boss_spr3,  SPRITE_OFS_X + boss_x + 8,  SPRITE_OFS_Y + boss_y + 32);
+                    move_sprite_clip(boss_spr0,  SPRITE_OFS_X + boss_x,      SPRITE_OFS_Y + boss_y + 16);
+                    move_sprite_clip(boss_spr1,  SPRITE_OFS_X + boss_x + 8,  SPRITE_OFS_Y + boss_y + 16);
+                    move_sprite_clip(boss_spr2,  SPRITE_OFS_X + boss_x,      SPRITE_OFS_Y + boss_y + 32);
+                    move_sprite_clip(boss_spr3,  SPRITE_OFS_X + boss_x + 8,  SPRITE_OFS_Y + boss_y + 32);
                     break;
             }
                 
@@ -590,7 +673,7 @@ void draw_level(void)
     {
         if( monster_shot_act[i] == TRUE )
         {
-            move_sprite(monster_shot_spr[i],    SPRITE_OFS_X + monster_shot_x[i],   SPRITE_OFS_Y + monster_shot_y[i] + 16);
+            move_sprite_clip(monster_shot_spr[i],    SPRITE_OFS_X + monster_shot_x[i],   SPRITE_OFS_Y + monster_shot_y[i] + 16);
         }
     }
     
@@ -599,8 +682,8 @@ void draw_level(void)
     {
         if( explosion_act[i] == TRUE )
         {
-            move_sprite(explosion_spr0[i],  SPRITE_OFS_X + explosion_x[i],      SPRITE_OFS_Y + explosion_y[i] + 16);
-            move_sprite(explosion_spr1[i],  SPRITE_OFS_X + explosion_x[i]+8,    SPRITE_OFS_Y + explosion_y[i] + 16);
+            move_sprite_clip(explosion_spr0[i],  SPRITE_OFS_X + explosion_x[i],      SPRITE_OFS_Y + explosion_y[i] + 16);
+            move_sprite_clip(explosion_spr1[i],  SPRITE_OFS_X + explosion_x[i]+8,    SPRITE_OFS_Y + explosion_y[i] + 16);
         }
     }
     
@@ -609,10 +692,12 @@ void draw_level(void)
     {
         if( stone_act[i] == TRUE )
         {
-            move_sprite(stone_spr[i],   SPRITE_OFS_X + stone_x[i],  SPRITE_OFS_Y + stone_y[i] + 16);
+            move_sprite_clip(stone_spr[i],   SPRITE_OFS_X + stone_x[i],  SPRITE_OFS_Y + stone_y[i] + 16);
         }
     }
 }
+
+void lcd_isr(void);
 
 void enter_level(void)
 {
@@ -623,6 +708,8 @@ void enter_level(void)
     
 //  SHOW_SPRITES;   // set in the LCD ISR
     DISPLAY_ON;
+    
+    add_LCD(lcd_isr);
     
     fade_from_white();
     
@@ -653,7 +740,7 @@ void enter_level(void)
         }
 #endif
         //next level
-        if( (level_min != 4) && (player_x > 160) )
+        if( (level_min != 4) && (player_x > 152) )
         {
             stop_music();
             fade_to_white();
@@ -720,8 +807,8 @@ void enter_level(void)
                 }
                 player_y += (player_vel >> 3);
                 
-                move_sprite(player_spr0,    SPRITE_OFS_X + player_x,    SPRITE_OFS_Y + player_y + 16);
-                move_sprite(player_spr1,    SPRITE_OFS_X + player_x+8,  SPRITE_OFS_Y + player_y + 16);
+                move_sprite_clip(player_spr0,    SPRITE_OFS_X + player_x,    SPRITE_OFS_Y + player_y + 16);
+                move_sprite_clip(player_spr1,    SPRITE_OFS_X + player_x+8,  SPRITE_OFS_Y + player_y + 16);
                 
                 play_sound();
                 
@@ -733,7 +820,8 @@ void enter_level(void)
                 wait_vbl_done();
             }
             
-            clear_all();
+            clear_sprites(g_num_clipping_sprites);
+            clear_all_objects();
             
             //gameover sprite
             game_over_spr0 = get_sprite();
@@ -746,10 +834,10 @@ void enter_level(void)
             set_sprite_tile(game_over_spr2,ST_GAME_OVER2);
             set_sprite_tile(game_over_spr3,ST_GAME_OVER3);
             
-            move_sprite(game_over_spr0, SPRITE_OFS_X + 72,  SPRITE_OFS_Y + 88);
-            move_sprite(game_over_spr1, SPRITE_OFS_X + 80,  SPRITE_OFS_Y + 88);
-            move_sprite(game_over_spr2, SPRITE_OFS_X + 88,  SPRITE_OFS_Y + 88);
-            move_sprite(game_over_spr3, SPRITE_OFS_X + 96,  SPRITE_OFS_Y + 88);
+            move_sprite_clip(game_over_spr0, SPRITE_OFS_X + 72,  SPRITE_OFS_Y + 88);
+            move_sprite_clip(game_over_spr1, SPRITE_OFS_X + 80,  SPRITE_OFS_Y + 88);
+            move_sprite_clip(game_over_spr2, SPRITE_OFS_X + 88,  SPRITE_OFS_Y + 88);
+            move_sprite_clip(game_over_spr3, SPRITE_OFS_X + 96,  SPRITE_OFS_Y + 88);
             
             set_music(GAME_OVER_MUSIC);
             
@@ -773,6 +861,7 @@ void enter_level(void)
         
         wait_vbl_done();
     }
+    remove_LCD(lcd_isr);
 }
 
 void enter_end(void)
@@ -788,7 +877,7 @@ void enter_end(void)
     w = 0;
     for( i = 0; i != 20; i++ )
     {
-        set_bkg_tiles(VIEWPORT_X_OFS + i,0,1,18,&end_map[w]);
+        set_bkg_tiles(VIEWPORT_X_OFS + i,VIEWPORT_Y_OFS,1,18,&end_map[w]);
         w += 18;
     }
     move_bkg(0,0);
@@ -797,7 +886,7 @@ void enter_end(void)
     for( i = 0; i != 4; i++ )
     {
         j = (player_score >> (i<<2)) & 0x0F;
-        set_bkg_tiles(VIEWPORT_X_OFS + 10-i,14,1,1,&hud_data[14+j]);    
+        set_bkg_tiles(VIEWPORT_X_OFS + 10-i,14 + VIEWPORT_Y_OFS,1,1,&hud_data[14+j]);    
     }
     
     if( player_score > high_score )
@@ -830,3 +919,14 @@ void enter_end(void)
     }   
 }
 
+void move_sprite_clip(uint8_t nb, uint8_t x, uint8_t y)
+{
+#ifdef CLIP_SPRITES_X
+    if(x >= (8 * VIEWPORT_X_OFS - 8) && x < (8 * (VIEWPORT_X_OFS + VIEWPORT_WIDTH + 0)) && y < (8 * (VIEWPORT_Y_OFS + VIEWPORT_HEIGHT)))
+        move_sprite(nb, x, y);      // inside viewport - show
+    else
+        move_sprite(nb, x, 240);    // outside viewport - hide
+#else
+    move_sprite(nb, x, y);
+#endif
+}

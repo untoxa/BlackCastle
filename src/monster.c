@@ -443,7 +443,7 @@ void update_monster_shot(void) BANKED
             
             tile_x = ((monster_shot_x[i] + 4 + scroll_pos) >> 3) - 1;
             tile_y = ((monster_shot_y[i] + 3) >> 3) - 2;
-            pos = (tile_x << 4) + tile_y;
+            pos = BUFPOS(tile_x, tile_y);
             tile = buf[pos];
             
             if( (monster_shot_x[i] > 168) || (tile >= 16) )
@@ -491,7 +491,7 @@ void update_knight( UBYTE i )
     {
         if( monster_dir[i] == 1 )
         {
-            if( monster_x[i] > 176 )
+            if( monster_x[i] > ENEMY_SPAWN_POS_X )
             {
                 monster_x[i] += monster_dir[i];
             } else {
@@ -499,8 +499,8 @@ void update_knight( UBYTE i )
                 tile_y1 = ((monster_y[i] + 16) >> 3) - 2;
                 tile_y2 = ((monster_y[i] + 14) >> 3) - 2;
             
-                pos1 = (tile_x << 4) + tile_y1;
-                pos2 = (tile_x << 4) + tile_y2;
+                pos1 = BUFPOS(tile_x, tile_y1);
+                pos2 = BUFPOS(tile_x, tile_y2);
             
                 tile1 = buf[pos1];
                 tile2 = buf[pos2];
@@ -512,7 +512,7 @@ void update_knight( UBYTE i )
                 monster_x[i] += monster_dir[i];
             }
         } else {
-            if( monster_x[i] > 176 )
+            if( monster_x[i] > ENEMY_SPAWN_POS_X )
             {
                 monster_x[i] += monster_dir[i];
             } else {
@@ -520,8 +520,8 @@ void update_knight( UBYTE i )
                 tile_y1 = ((monster_y[i] + 16) >> 3) - 2;
                 tile_y2 = ((monster_y[i] + 14) >> 3) - 2;
                 
-                pos1 = (tile_x << 4) + tile_y1;
-                pos2 = (tile_x << 4) + tile_y2;
+                pos1 = BUFPOS(tile_x, tile_y1);
+                pos2 = BUFPOS(tile_x, tile_y2);
                 
                 tile1 = buf[pos1];
                 tile2 = buf[pos2];
@@ -706,7 +706,7 @@ void update_spider( UBYTE i )
         
         tile_x = ((monster_x[i] + 4 + scroll_pos) >> 3) - 1;
         tile_y = ((monster_y[i] + 16) >> 3) - 2;
-        pos = (tile_x << 4) + tile_y;
+        pos = BUFPOS(tile_x, tile_y);
         tile = buf[pos];
         if( tile >= 16 )
         {
@@ -747,7 +747,7 @@ void update_skeleton( UBYTE i )
         {
             if( monster_dir[i] == 1 )
             {
-                if( monster_x[i] > 176 )
+                if( monster_x[i] > ENEMY_SPAWN_POS_X )
                 {
                     monster_x[i] += monster_dir[i];
                 } else {
@@ -755,8 +755,8 @@ void update_skeleton( UBYTE i )
                     tile_y1 = ((monster_y[i] + 16) >> 3) - 2;
                     tile_y2 = ((monster_y[i] + 14) >> 3) - 2;
                 
-                    pos1 = (tile_x << 4) + tile_y1;
-                    pos2 = (tile_x << 4) + tile_y2;
+                    pos1 = BUFPOS(tile_x, tile_y1);
+                    pos2 = BUFPOS(tile_x, tile_y2);
                 
                     tile1 = buf[pos1];
                     tile2 = buf[pos2];
@@ -768,7 +768,7 @@ void update_skeleton( UBYTE i )
                     monster_x[i] += monster_dir[i];
                 }
             } else {
-                if( monster_x[i] > 176 )
+                if( monster_x[i] > ENEMY_SPAWN_POS_X )
                 {
                     monster_x[i] += monster_dir[i];
                 } else {
@@ -776,8 +776,8 @@ void update_skeleton( UBYTE i )
                     tile_y1 = ((monster_y[i] + 16) >> 3) - 2;
                     tile_y2 = ((monster_y[i] + 14) >> 3) - 2;
                     
-                    pos1 = (tile_x << 4) + tile_y1;
-                    pos2 = (tile_x << 4) + tile_y2;
+                    pos1 = BUFPOS(tile_x, tile_y1);
+                    pos2 = BUFPOS(tile_x, tile_y2);
                     
                     tile1 = buf[pos1];
                     tile2 = buf[pos2];

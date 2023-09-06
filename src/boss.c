@@ -1,4 +1,4 @@
-#pragma bank 2
+#pragma bank 3
 
 #include <gbdk/platform.h>
 
@@ -238,7 +238,7 @@ void update_boss_minotaur(void)
     tile_x = ((boss_x + 12) >> 3) - 1;
     tile_y = ((boss_y + 23) >> 3) - 2;
     
-    pos = (tile_x << 4) + tile_y;
+    pos = BUFPOS(tile_x, tile_y);
     tile = buf[pos];
     
     if( tile < 15 )

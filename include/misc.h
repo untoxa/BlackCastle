@@ -1,7 +1,11 @@
 #ifndef _MISC
 #define _MISC
 
+#if defined(NINTENDO)
 #define MAX_SPRITES         40
+#else
+#define MAX_SPRITES         64
+#endif
 #define MAX_ITEM            4
 #define MAX_PLATFORM        4
 #define MAX_EXPLOSION       4
@@ -35,6 +39,7 @@
 #define PT_UPDOWN_PLATFORM      1
 #define PT_LEFTRIGHT_PLATFORM   2   
 
+extern const unsigned char scroll_seam_hide_tile[];
 extern const unsigned char candle_tiles[];
 extern const unsigned char title_numbers[];
 extern const unsigned char hud_data[];
@@ -86,15 +91,19 @@ extern BYTE stone_vel[MAX_STONE];
 
 //functions
 
-void set_sound(UBYTE sound);
-void play_sound(void);
-
 void fade_to_white(void);
 void fade_from_white(void);
 
 UBYTE get_sprite(void);
 void clear_sprite(UBYTE i);
-void clear_all(void);
+void clear_sprites(UBYTE starting_index);
+void clear_all_objects();
+
+inline void clear_all(void)
+{
+    clear_sprites(0);
+    clear_all_objects();
+}
 
 void new_item(UBYTE x, UBYTE y, UBYTE type);
 void update_item(void);
