@@ -4,6 +4,8 @@
 extern const unsigned char title_tiles[];
 extern const unsigned char title_map[];
 extern const unsigned char sprite_tiles[];
+extern const unsigned char sprite_tiles_noflip[];
+extern const unsigned char sprite_tiles_bosses[];
 extern const unsigned char hud_tiles[];
 extern const unsigned char hud_map[];
 

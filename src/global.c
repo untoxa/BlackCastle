@@ -1,4 +1,5 @@
 #include <gbdk/platform.h>
+#include <gbdk/incbin.h>
 
 #include "global.h"
 
@@ -65,12 +66,19 @@ const state_handler_t state_handlers[] = {
 #define OBJ_SPIDER              11
 #define OBJ_SKELETON            12
 
+extern const unsigned char sprite_tiles_game_over[];
+INCBIN(sprite_tiles_game_over, "res/sprite_tiles_game_over.chr")
+
 const level_t levels[] = {
     {
         .bank_tiles = BANK(level1_tiles),
         .tiles = level1_tiles,
         .bank_sprites = BANK(sprite_tiles),
         .sprites = sprite_tiles,
+        .bank_sprites_noflip = BANK(sprite_tiles_noflip),
+        .sprites_noflip = sprite_tiles_noflip,
+        .bank_sprites_bosses = BANK(sprite_tiles_bosses),
+        .sprites_bosses = sprite_tiles_bosses,
         .bank_hud = BANK(hud_tiles),
         .hud_tiles = hud_tiles,
         .hud_map = hud_map,
@@ -111,6 +119,10 @@ const level_t levels[] = {
         .tiles = level2_tiles,
         .bank_sprites = BANK(sprite_tiles),
         .sprites = sprite_tiles,
+        .bank_sprites_noflip = BANK(sprite_tiles_noflip),
+        .sprites_noflip = sprite_tiles_noflip,
+        .bank_sprites_bosses = BANK(sprite_tiles_bosses),
+        .sprites_bosses = sprite_tiles_bosses,
         .bank_hud = BANK(hud_tiles),
         .hud_tiles = hud_tiles,
         .hud_map = hud_map,
@@ -151,6 +163,10 @@ const level_t levels[] = {
         .tiles = level3_tiles,
         .bank_sprites = BANK(sprite_tiles),
         .sprites = sprite_tiles,
+        .bank_sprites_noflip = BANK(sprite_tiles_noflip),
+        .sprites_noflip = sprite_tiles_noflip,
+        .bank_sprites_bosses = BANK(sprite_tiles_bosses),
+        .sprites_bosses = sprite_tiles_bosses,
         .bank_hud = BANK(hud_tiles),
         .hud_tiles = hud_tiles,
         .hud_map = hud_map,
@@ -286,7 +302,7 @@ inline UBYTE add_clipping_sprites(void)
         for(i = 0; i < 8; i++, spr_idx++)
         {
             get_sprite();
-            set_sprite_tile(spr_idx, 0xFE + 1);
+            set_sprite_tile(spr_idx, SPRITE_MASK_TILE_INDEX + ST_OFFSET);
             move_sprite(spr_idx, (VIEWPORT_X_OFS + VIEWPORT_WIDTH + 0) << 3, (i << 4) + ((2 + VIEWPORT_Y_OFS) << 3) - 1);
         }
     }
@@ -297,7 +313,7 @@ inline UBYTE add_clipping_sprites(void)
     for(i = 0; i < 15; i++, spr_idx++)
     {
         get_sprite();
-        set_sprite_tile(spr_idx, 0xFE + 1);
+        set_sprite_tile(spr_idx, SPRITE_MASK_TILE_INDEX + ST_OFFSET);
         move_sprite(spr_idx, (VIEWPORT_X_OFS + i) << 3, ((VIEWPORT_Y_OFS + VIEWPORT_HEIGHT) << 3) - 1);
     }
 #endif
@@ -308,7 +324,7 @@ inline UBYTE add_clipping_sprites(void)
         for(i = 0; i < 8; i++, spr_idx++)
         {
             get_sprite();
-            set_sprite_tile(spr_idx, 0xFE + 1);
+            set_sprite_tile(spr_idx, SPRITE_MASK_TILE_INDEX + ST_OFFSET);
             move_sprite(spr_idx, (VIEWPORT_X_OFS - 1) << 3, (i << 4) + ((2 + VIEWPORT_Y_OFS) << 3) - 1);
         }
     }
@@ -333,15 +349,33 @@ void init_level(void)
 #ifdef SEGA
     set_2bpp_palette(COMPAT_PALETTE(0,1,4,3));
 #endif
-    set_sprite_data(0,ST_LAST,current_level->sprites);
+    // Player/player shots/monsters which can flip
+    set_sprite_data(0, ST_NUM_FLIP, current_level->sprites);
+#ifdef SEGA
+    // Mirror sprite tiles in SW in second half of tile table, as we lack sprite flipping in HW
+    set_sprite_data_flipx(ST_NUM_FLIP, ST_NUM_FLIP, current_level->sprites);
+#endif
+    // These sprite tiles don't need mirroring
+    // Leave gap of 2 8x16 tiles to avoid boss tiles overwriting them
+    set_sprite_data(2*ST_NUM_FLIP + 4, ST_NUM_NOFLIP, current_level->sprites_noflip);
+
+    if(level_min == 4)
+    {
+        // Boss sprite tiles (no flipping needed - overwrite monster tiles)
+        set_sprite_data(ST_BOSS_BAT0 & 0xFE, ST_NUM_BOSS, current_level->sprites_bosses);
+    }
     
-#ifdef NINTENDO_NES
-    set_sprite_data(0xFE, 2, scroll_seam_hide_tile);
+#if defined(CLIP_SPRITES_X) || defined(CLIP_SPRITES_Y)
+    set_sprite_data(SPRITE_MASK_TILE_INDEX, 2, scroll_seam_hide_tile);
 #endif
 
     clear_all();
-    
+
+#if defined(CLIP_SPRITES_X) || defined(CLIP_SPRITES_Y)
     g_num_clipping_sprites = add_clipping_sprites();
+#else
+    g_num_clipping_sprites = 0;
+#endif
     
     //player
     player_x = 32;
@@ -821,6 +855,9 @@ void enter_level(void)
             
             clear_sprites(g_num_clipping_sprites);
             clear_all_objects();
+            
+            // Upload "GAME OVER" tiles (replaces gameplay tiles which are now inactive)
+            set_sprite_data(0, ST_GAME_OVER_NUM_TILES, sprite_tiles_game_over);
             
             //gameover sprite
             game_over_spr0 = get_sprite();

@@ -11,8 +11,12 @@ INCBIN_EXTERN(title_tiles)
 INCBIN(title_map, "res/title_map.bin")
 INCBIN_EXTERN(title_map)
 
-INCBIN(sprite_tiles, "res/sprite_tiles.chr")
+INCBIN(sprite_tiles, "res/sprite_tiles_flip.chr")
 INCBIN_EXTERN(sprite_tiles)
+INCBIN(sprite_tiles_noflip, "res/sprite_tiles_noflip.chr")
+INCBIN_EXTERN(sprite_tiles_noflip)
+INCBIN(sprite_tiles_bosses, "res/sprite_tiles_bosses.chr")
+INCBIN_EXTERN(sprite_tiles_bosses)
 
 INCBIN(hud_tiles, "res/hud_tiles.chr")
 INCBIN_EXTERN(hud_tiles)
