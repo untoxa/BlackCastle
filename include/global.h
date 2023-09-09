@@ -27,6 +27,8 @@
         #define VIEWPORT_Y_OFS 0
         #define SPRITE_OFS_X (DEVICE_SPRITE_PX_OFFSET_X + 6 * 8 - 8)
         #define SPRITE_OFS_Y (DEVICE_SPRITE_PX_OFFSET_Y - 16)
+        #define CLIP_SPRITES_X
+        #define CLIP_SPRITES_Y
     #endif
     #define RAND_SOURCE sys_time
 #elif defined(NINTENDO_NES)
@@ -69,7 +71,7 @@
 #define TRUE                    1
 
 #define ST_OFFSET               1u
-
+// Player, items, weapons and explosion
 #define ST_PLAYER_IDLE0         0u + ST_OFFSET
 #define ST_PLAYER_IDLE1         2u + ST_OFFSET
 #define ST_PLAYER_JUMP0         4u + ST_OFFSET
@@ -93,41 +95,54 @@
 #define ST_PLAYER_MACE1         40u + ST_OFFSET
 #define ST_PLAYER_MACE2         42u + ST_OFFSET
 #define ST_PLAYER_MACE3         44u + ST_OFFSET
-#define ST_CRYSTAL              46u + ST_OFFSET
-#define ST_HEART                48u + ST_OFFSET
-#define ST_STONE                50u + ST_OFFSET
-#define ST_PLATFORM             52u + ST_OFFSET
-#define ST_MONSTER_SHOT         54u + ST_OFFSET
-#define ST_EXPLOSION0           56u + ST_OFFSET
-#define ST_EXPLOSION1           58u + ST_OFFSET
-#define ST_EXPLOSION2           60u + ST_OFFSET
-#define ST_EXPLOSION3           62u + ST_OFFSET
-#define ST_EXPLOSION4           64u + ST_OFFSET
-#define ST_EXPLOSION5           66u + ST_OFFSET
-#define ST_KNIGHT0              68u + ST_OFFSET
-#define ST_KNIGHT1              70u + ST_OFFSET
-#define ST_KNIGHT2              72u + ST_OFFSET
-#define ST_KNIGHT3              74u + ST_OFFSET
-#define ST_BAT0                 76u + ST_OFFSET
-#define ST_BAT1                 78u + ST_OFFSET
-#define ST_BAT2                 80u + ST_OFFSET
-#define ST_BAT3                 82u + ST_OFFSET
-#define ST_DEAMON0              84u + ST_OFFSET
-#define ST_DEAMON1              86u + ST_OFFSET
-#define ST_DEAMON2              88u + ST_OFFSET
-#define ST_DEAMON3              90u + ST_OFFSET
-#define ST_SPIDER0              92u + ST_OFFSET
-#define ST_SPIDER1              94u + ST_OFFSET
-#define ST_SPIDER2              96u + ST_OFFSET
-#define ST_SPIDER3              98u + ST_OFFSET
-#define ST_SKELETON0            100u + ST_OFFSET
-#define ST_SKELETON1            102u + ST_OFFSET
-#define ST_SKELETON2            104u + ST_OFFSET
-#define ST_SKELETON3            106u + ST_OFFSET
-#define ST_SKELETON4            108u + ST_OFFSET
-#define ST_SKELETON5            110u + ST_OFFSET
-#define ST_SKELETON6            112u + ST_OFFSET
-#define ST_SKELETON7            114u + ST_OFFSET
+#define ST_LAST                 46u + ST_OFFSET
+// Flippable monster tiles
+#define ST_KNIGHT0              46u + ST_OFFSET
+#define ST_KNIGHT1              48u + ST_OFFSET
+#define ST_KNIGHT2              50u + ST_OFFSET
+#define ST_KNIGHT3              52u + ST_OFFSET
+#define ST_SKELETON0            54u  + ST_OFFSET
+#define ST_SKELETON1            56u  + ST_OFFSET
+#define ST_SKELETON2            58u  + ST_OFFSET
+#define ST_SKELETON3            60u  + ST_OFFSET
+#define ST_SKELETON4            62u  + ST_OFFSET
+#define ST_SKELETON5            64u  + ST_OFFSET
+#define ST_SKELETON6            66u  + ST_OFFSET
+#define ST_SKELETON7            68u  + ST_OFFSET
+#define ST_NUM_FLIP             70u
+// Non-flippable monster tiles
+#define ST_BAT0                 144u + ST_OFFSET
+#define ST_BAT1                 146u + ST_OFFSET
+#define ST_BAT2                 148u + ST_OFFSET
+#define ST_BAT3                 150u + ST_OFFSET
+#define ST_DEAMON0              152u + ST_OFFSET
+#define ST_DEAMON1              154u + ST_OFFSET
+#define ST_DEAMON2              156u + ST_OFFSET
+#define ST_DEAMON3              158u + ST_OFFSET
+#define ST_SPIDER0              160u + ST_OFFSET
+#define ST_SPIDER1              162u + ST_OFFSET
+#define ST_SPIDER2              164u + ST_OFFSET
+#define ST_SPIDER3              166u + ST_OFFSET
+// Items/Explosions/etc (non-flippable)
+#define ST_CRYSTAL              168u + ST_OFFSET
+#define ST_HEART                170u + ST_OFFSET
+#define ST_STONE                172u + ST_OFFSET
+#define ST_PLATFORM             174u + ST_OFFSET
+#define ST_MONSTER_SHOT         176u + ST_OFFSET
+#define ST_EXPLOSION0           178u + ST_OFFSET
+#define ST_EXPLOSION1           180u + ST_OFFSET
+#define ST_EXPLOSION2           182u + ST_OFFSET
+#define ST_EXPLOSION3           184u + ST_OFFSET
+#define ST_EXPLOSION4           186u + ST_OFFSET
+#define ST_EXPLOSION5           188u + ST_OFFSET
+#define ST_NUM_NOFLIP           46u
+// "GAME OVER" tiles are uploaded after hiding all other sprites - can reuse tiles 
+#define ST_GAME_OVER0           0u + ST_OFFSET
+#define ST_GAME_OVER1           2u + ST_OFFSET
+#define ST_GAME_OVER2           4u + ST_OFFSET
+#define ST_GAME_OVER3           6u + ST_OFFSET
+#define ST_GAME_OVER_NUM_TILES  8u
+// Boss tiles (overlap with monster tiles)
 #define ST_BOSS_BAT0            116u + ST_OFFSET
 #define ST_BOSS_BAT1            118u + ST_OFFSET
 #define ST_BOSS_BAT2            120u + ST_OFFSET
@@ -154,11 +169,10 @@
 #define ST_BOSS_REAPER5         162u + ST_OFFSET
 #define ST_BOSS_REAPER6         164u + ST_OFFSET
 #define ST_BOSS_REAPER7         166u + ST_OFFSET
-#define ST_GAME_OVER0           168u + ST_OFFSET
-#define ST_GAME_OVER1           170u + ST_OFFSET
-#define ST_GAME_OVER2           172u + ST_OFFSET
-#define ST_GAME_OVER3           174u + ST_OFFSET
-#define ST_LAST                 176u + ST_OFFSET
+#define ST_NUM_BOSS             52u
+// Used for masking left/right and bottom of window on SMS/NES
+#define SPRITE_MASK_TILE_INDEX  0xBEu
+
 #define OBJ_CRYSTAL             0
 #define OBJ_HEART               1
 #define OBJ_SWORD               2
@@ -236,6 +250,10 @@ typedef struct level_t {
     UBYTE * tiles;
     UBYTE bank_sprites;
     UBYTE * sprites;
+    UBYTE bank_sprites_noflip;
+    UBYTE * sprites_noflip;
+    UBYTE bank_sprites_bosses;
+    UBYTE * sprites_bosses;
     UBYTE bank_hud;
     UBYTE * hud_tiles;
     UBYTE * hud_map;
@@ -246,6 +264,8 @@ typedef struct level_t {
 BANKREF_EXTERN(title_tiles)
 BANKREF_EXTERN(title_map)
 BANKREF_EXTERN(sprite_tiles)
+BANKREF_EXTERN(sprite_tiles_noflip)
+BANKREF_EXTERN(sprite_tiles_bosses)
 BANKREF_EXTERN(hud_tiles)
 BANKREF_EXTERN(hud_map)
 BANKREF_EXTERN(level1_tiles)
@@ -288,5 +308,22 @@ inline void update_column(UBYTE pos)
 }
 
 void move_sprite_clip(uint8_t nb, uint8_t x, uint8_t y);
+
+inline void set_sprite_flip(uint8_t nb, uint8_t flip)
+{
+#if defined(SEGA)
+    uint8_t tile = shadow_OAM[0x41+(nb << 1)];
+    if(tile < (ST_NUM_FLIP+1) && flip)
+        shadow_OAM[0x41+(nb << 1)] = tile + ST_NUM_FLIP;
+    else if(tile >= (ST_NUM_FLIP+1) && !flip)
+        shadow_OAM[0x41+(nb << 1)] = tile - ST_NUM_FLIP;
+#else
+    set_sprite_prop(nb, flip);
+#endif
+}
+
+#if defined(SEGA)
+void set_sprite_data_flipx(uint8_t first_tile, uint8_t nb_tiles, const uint8_t *data);
+#endif
 
 #endif

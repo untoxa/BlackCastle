@@ -67,7 +67,7 @@ void new_player_shot(void)
             
             if( player_dir == -1 )
             {
-                set_sprite_prop(player_shot_spr[i],S_FLIPX);
+                set_sprite_flip(player_shot_spr[i],S_FLIPX);
                 player_shot_dir[i] = -player_shot_dir[i];
             }
             
@@ -456,6 +456,11 @@ void update_player(void) BANKED
     }
 
     player_prp &= ~S_PRIORITY;
+#if defined(SEGA)
+    // TODO: Implement sprite-behind-background through BG attribute(?)
+    set_sprite_flip(player_spr0, player_prp);
+    set_sprite_flip(player_spr1, player_prp);
+#else
     if( (tile1 >= 16) && (tile1 <= 18 ) )
     {
         player_prp |= S_PRIORITY;
@@ -475,7 +480,7 @@ void update_player(void) BANKED
 
     set_sprite_prop(player_spr0,player_prp);
     set_sprite_prop(player_spr1,player_prp);
-    
+#endif
     
     /*
     if( player_vel >= 0 )

@@ -537,8 +537,6 @@ void update_knight( UBYTE i )
 
     if( monster_dir[i] == 1 )
     {
-        set_sprite_prop(monster_spr0[i],0);
-        set_sprite_prop(monster_spr1[i],0);
         if( monster_ani[i] & 16 )
         {
             set_sprite_tile(monster_spr0[i],ST_KNIGHT0);
@@ -547,9 +545,9 @@ void update_knight( UBYTE i )
             set_sprite_tile(monster_spr0[i],ST_KNIGHT2);
             set_sprite_tile(monster_spr1[i],ST_KNIGHT3);
         }
+        set_sprite_flip(monster_spr0[i],0);
+        set_sprite_flip(monster_spr1[i],0);
     } else {
-        set_sprite_prop(monster_spr0[i],S_FLIPX);
-        set_sprite_prop(monster_spr1[i],S_FLIPX);
         if( monster_ani[i] & 16 )
         {
             set_sprite_tile(monster_spr0[i],ST_KNIGHT1);
@@ -558,6 +556,8 @@ void update_knight( UBYTE i )
             set_sprite_tile(monster_spr0[i],ST_KNIGHT3);
             set_sprite_tile(monster_spr1[i],ST_KNIGHT2);
         }
+        set_sprite_flip(monster_spr0[i],S_FLIPX);
+        set_sprite_flip(monster_spr1[i],S_FLIPX);
     }
 }
 
@@ -793,8 +793,6 @@ void update_skeleton( UBYTE i )
         
         if( monster_dir[i] == 1 )
         {
-            set_sprite_prop(monster_spr0[i],0);
-            set_sprite_prop(monster_spr1[i],0);
             if( monster_ani[i] & 16 )
             {
                 set_sprite_tile(monster_spr0[i],ST_SKELETON0);
@@ -803,9 +801,9 @@ void update_skeleton( UBYTE i )
                 set_sprite_tile(monster_spr0[i],ST_SKELETON2);
                 set_sprite_tile(monster_spr1[i],ST_SKELETON3);
             }
+            set_sprite_flip(monster_spr0[i],0);
+            set_sprite_flip(monster_spr1[i],0);
         } else {
-            set_sprite_prop(monster_spr0[i],S_FLIPX);
-            set_sprite_prop(monster_spr1[i],S_FLIPX);
             if( monster_ani[i] & 16 )
             {
                 set_sprite_tile(monster_spr0[i],ST_SKELETON1);
@@ -814,12 +812,12 @@ void update_skeleton( UBYTE i )
                 set_sprite_tile(monster_spr0[i],ST_SKELETON3);
                 set_sprite_tile(monster_spr1[i],ST_SKELETON2);
             }
+            set_sprite_flip(monster_spr0[i],S_FLIPX);
+            set_sprite_flip(monster_spr1[i],S_FLIPX);
         }
     } else {
         if( monster_dir[i] == 1 )
         {
-            set_sprite_prop(monster_spr0[i],0);
-            set_sprite_prop(monster_spr1[i],0);
             if( (monster_cnt[i] == 128) || (monster_cnt[i] == 6) )
             {
                 set_sprite_tile(monster_spr0[i],ST_SKELETON4);
@@ -830,9 +828,9 @@ void update_skeleton( UBYTE i )
                 set_sprite_tile(monster_spr0[i],ST_SKELETON6);
                 set_sprite_tile(monster_spr1[i],ST_SKELETON7);
             }
+            set_sprite_flip(monster_spr0[i],0);
+            set_sprite_flip(monster_spr1[i],0);
         } else {
-            set_sprite_prop(monster_spr0[i],S_FLIPX);
-            set_sprite_prop(monster_spr1[i],S_FLIPX);
             if( (monster_cnt[i] == 128) || (monster_cnt[i] == 6) )
             {
                 set_sprite_tile(monster_spr0[i],ST_SKELETON5);
@@ -843,6 +841,8 @@ void update_skeleton( UBYTE i )
                 set_sprite_tile(monster_spr0[i],ST_SKELETON7);
                 set_sprite_tile(monster_spr1[i],ST_SKELETON6);
             }
+            set_sprite_flip(monster_spr0[i],S_FLIPX);
+            set_sprite_flip(monster_spr1[i],S_FLIPX);
         }
         monster_lif[i] = 8;
         monster_cnt[i]--;
