@@ -512,14 +512,13 @@ void update_level(void)
     UBYTE i,j,type,y;
 
     scroll = 0;
-    SET_BANK(2);
+
     update_player();
-    SET_BANK(1);
+
     update_platform();
 
-    SET_BANK(2);
     update_player_shot();
-    SET_BANK(1);
+
     update_item();
 
     update_monster();
@@ -527,9 +526,11 @@ void update_level(void)
     update_boss();
 
     update_monster_shot();
-    SET_BANK(1);
+
     update_explosion();
+
     update_stone();
+
     SET_BANK(2);
     //candel
     level_ani++;

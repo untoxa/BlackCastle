@@ -37,7 +37,7 @@
 
 #define PT_FALLING_PLATFORM     0
 #define PT_UPDOWN_PLATFORM      1
-#define PT_LEFTRIGHT_PLATFORM   2   
+#define PT_LEFTRIGHT_PLATFORM   2
 
 extern const unsigned char scroll_seam_hide_tile[];
 extern const unsigned char candle_tiles[];
@@ -91,8 +91,8 @@ extern BYTE stone_vel[MAX_STONE];
 
 //functions
 
-void fade_to_white(void);
-void fade_from_white(void);
+void fade_to_white(void) BANKED;
+void fade_from_white(void) BANKED;
 
 UBYTE get_sprite(void);
 void clear_sprite(UBYTE i);
@@ -105,17 +105,17 @@ inline void clear_all(void)
     clear_all_objects();
 }
 
-void new_item(UBYTE x, UBYTE y, UBYTE type);
-void update_item(void);
+void new_item(UBYTE x, UBYTE y, UBYTE type) BANKED;
+void update_item(void) BANKED;
 
-void new_platform(UBYTE x, UBYTE y, UBYTE type);
-void update_platform(void);
+void new_platform(UBYTE x, UBYTE y, UBYTE type) BANKED;
+void update_platform(void) BANKED;
 
-void new_explosion(UBYTE x, UBYTE y);
-void update_explosion(void);
+void new_explosion(UBYTE x, UBYTE y) BANKED;
+void update_explosion(void) BANKED;
 
-void new_stone(UBYTE x, UBYTE y, BYTE dir);
-void update_stone(void);
+void new_stone(UBYTE x, UBYTE y, BYTE dir) BANKED;
+void update_stone(void) BANKED;
 
 void add_score(UBYTE value);
 void update_hud(UBYTE type);

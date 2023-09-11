@@ -42,6 +42,31 @@ UBYTE stone_spr[MAX_STONE];
 BYTE stone_dir[MAX_STONE];
 BYTE stone_vel[MAX_STONE];
 
+UBYTE get_sprite(void) NONBANKED
+{
+    UBYTE i;
+
+    for( i = 0; i != MAX_SPRITES; i++ )
+    {
+        if( spr_act[i] == FALSE )
+        {
+            spr_act[i] = TRUE;
+            return i;
+        }
+    }
+    return i;
+}
+
+void clear_sprite(UBYTE i) NONBANKED
+{
+    if( i < MAX_SPRITES )
+    {
+        set_sprite_prop(i,0);
+        hide_sprite(i);
+        spr_act[i] = FALSE;
+    }
+}
+
 void clear_sprites(UBYTE starting_index) NONBANKED
 {
     UBYTE i;
@@ -101,7 +126,44 @@ void clear_all_objects(void) NONBANKED
     boss_act = FALSE;
 }
 
-void update_item(void)
+void new_item(UBYTE x, UBYTE y, UBYTE type) BANKED
+{
+    UBYTE i;
+
+    for( i = 0; i != MAX_ITEM; i++ )
+    {
+        if( item_act[i] == FALSE )
+        {
+            item_act[i] = TRUE;
+            item_spr[i] = get_sprite();
+            switch( type )
+            {
+                case IT_CRYSTAL:
+                    set_sprite_tile(item_spr[i],ST_CRYSTAL);
+                    break;
+                case IT_HEART:
+                    set_sprite_tile(item_spr[i],ST_HEART);
+                    break;
+                case IT_SWORD:
+                    set_sprite_tile(item_spr[i],ST_PLAYER_SWORD);
+                    break;
+                case IT_AXE:
+                    set_sprite_tile(item_spr[i],ST_PLAYER_AXE0);
+                    break;
+                case IT_MACE:
+                    set_sprite_tile(item_spr[i],ST_PLAYER_MACE0);
+                    break;
+            }
+            item_x[i] = x;
+            item_y[i] = y;
+            item_typ[i] = type;
+            item_vel[i] = 0;
+            break;
+        }
+    }
+}
+
+void update_item(void) BANKED
 {
     UBYTE tile_x, tile_y;
     UBYTE tile;
@@ -171,7 +233,46 @@ void update_item(void)
     }
 }
 
-void update_platform(void)
+void new_platform(UBYTE x, UBYTE y, UBYTE type) BANKED
+{
+    UBYTE i;
+
+    for( i = 0; i != MAX_PLATFORM; i++ )
+    {
+        if( platform_act[i] == FALSE )
+        {
+            platform_act[i] = TRUE;
+            platform_spr0[i] = get_sprite();
+            platform_spr1[i] = get_sprite();
+            set_sprite_tile(platform_spr0[i],ST_PLATFORM);
+            set_sprite_tile(platform_spr1[i],ST_PLATFORM);
+            platform_x[i] = x;
+            platform_y[i] = y;
+            platform_typ[i] = type;
+            switch( type )
+            {
+                case PT_FALLING_PLATFORM:
+                    platform_dir[i] = 0;
+                    platform_vel[i] = 0;
+                    break;
+                case PT_UPDOWN_PLATFORM:
+                    platform_dir[i] = 1;
+                    platform_pos[i] = platform_y[i];
+                    platform_vel[i] = 0;
+                    break;
+                case PT_LEFTRIGHT_PLATFORM:
+                    platform_dir[i] = -1;
+                    platform_pos[i] = 32;
+                    platform_vel[i] = 0;
+                    platform_x[i]--;
+                    break;
+            }
+            break;
+        }
+    }
+}
+
+void update_platform(void) BANKED
 {
     UBYTE i,j;
 
@@ -297,7 +398,29 @@ void update_platform(void)
     }
 }
 
-void update_explosion(void)
+void new_explosion(UBYTE x, UBYTE y) BANKED
+{
+    UBYTE i;
+
+    for( i = 0; i != MAX_EXPLOSION; i++ )
+    {
+        if( explosion_act[i] == FALSE )
+        {
+            explosion_act[i] = TRUE;
+            explosion_x[i] = x;
+            explosion_y[i] = y;
+            explosion_spr0[i] = get_sprite();
+            explosion_spr1[i] = get_sprite();
+            set_sprite_tile(explosion_spr0[i],ST_EXPLOSION0);
+            set_sprite_tile(explosion_spr1[i],ST_EXPLOSION1);
+            explosion_ani[i] = 0;
+            set_sound(SND_EXPLOSION);
+            break;
+        }
+    }
+}
+
+void update_explosion(void) BANKED
 {
     UBYTE i;
 
@@ -328,7 +451,36 @@ void update_explosion(void)
     }
 }
 
-void update_stone(void)
+void new_stone(UBYTE x, UBYTE y, BYTE dir) BANKED
+{
+    UBYTE i;
+    BYTE j;
+
+    j = -10;
+    if( dir > 0 )
+    {
+        dir = -1;
+    } else {
+        dir = 1;
+    }
+    for( i = 0; i != MAX_STONE; i++ )
+    {
+        if( stone_act[i] == TRUE )
+        {
+            clear_sprite(stone_spr[i]);
+        }
+        stone_act[i] = TRUE;
+        stone_x[i] = x;
+        stone_y[i] = y;
+        stone_spr[i] = get_sprite();
+        set_sprite_tile(stone_spr[i],ST_STONE);
+        stone_dir[i] = dir;
+        stone_vel[i] = j;
+        j += 5;
+    }
+}
+
+void update_stone(void) BANKED
 {
     UBYTE i;
 
