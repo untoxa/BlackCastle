@@ -43,6 +43,10 @@ UBYTE game_over_spr3;
 UWORD high_score;
 
 // Global map pointer and map bank, used by update_column
+UBYTE* g_meta_lookup_tl;
+UBYTE* g_meta_lookup_tr;
+UBYTE* g_meta_lookup_bl;
+UBYTE* g_meta_lookup_br;
 UBYTE* g_current_map;
 UBYTE g_current_map_bank;
 
@@ -82,6 +86,10 @@ const level_t levels[] = {
         .bank_hud = BANK(hud_tiles),
         .hud_tiles = hud_tiles,
         .hud_map = hud_map,
+        .meta_lookup_tl = level1_meta_lookup_tl,
+        .meta_lookup_tr = level1_meta_lookup_tr,
+        .meta_lookup_bl = level1_meta_lookup_bl,
+        .meta_lookup_br = level1_meta_lookup_br,
         .minor = {
             {
                 .bank_map = BANK(level1_1_map),
@@ -126,6 +134,10 @@ const level_t levels[] = {
         .bank_hud = BANK(hud_tiles),
         .hud_tiles = hud_tiles,
         .hud_map = hud_map,
+        .meta_lookup_tl = level2_meta_lookup_tl,
+        .meta_lookup_tr = level2_meta_lookup_tr,
+        .meta_lookup_bl = level2_meta_lookup_bl,
+        .meta_lookup_br = level2_meta_lookup_br,
         .minor = {
             {
                 .bank_map = BANK(level2_1_map),
@@ -170,6 +182,10 @@ const level_t levels[] = {
         .bank_hud = BANK(hud_tiles),
         .hud_tiles = hud_tiles,
         .hud_map = hud_map,
+        .meta_lookup_tl = level3_meta_lookup_tl,
+        .meta_lookup_tr = level3_meta_lookup_tr,
+        .meta_lookup_bl = level3_meta_lookup_bl,
+        .meta_lookup_br = level3_meta_lookup_br,
         .minor = {
             {
                 .bank_map = BANK(level3_1_map),
@@ -204,6 +220,22 @@ const level_t levels[] = {
         }
     }
 };
+
+void copy_map_column_to_buf(UBYTE pos)
+{
+    UBYTE j;
+    UBYTE i = pos;
+    UWORD w = i << 4;
+    UWORD wmod = w & 0x1E0;
+    for(j = 0; j < 8; j++)
+    {    
+        UBYTE metaidx = g_current_map[((i >> 1) << 3) + j];
+        buf[wmod +  0 + 2*j+0] = g_meta_lookup_tl[metaidx];
+        buf[wmod +  0 + 2*j+1] = g_meta_lookup_bl[metaidx];
+        buf[wmod + 16 + 2*j+0] = g_meta_lookup_tr[metaidx];
+        buf[wmod + 16 + 2*j+1] = g_meta_lookup_br[metaidx];
+    }
+}
 
 void init_title(void)
 {
@@ -340,6 +372,10 @@ void init_level(void)
     const level_t * current_level = &levels[level_maj - 1];
     const level_minor_t * current_stage = &(current_level->minor[level_min - 1]);
     g_current_map = current_stage->map;
+    g_meta_lookup_tl = current_level->meta_lookup_tl;
+    g_meta_lookup_tr = current_level->meta_lookup_tr;
+    g_meta_lookup_bl = current_level->meta_lookup_bl;
+    g_meta_lookup_br = current_level->meta_lookup_br;
     g_current_map_bank = current_stage->bank_map;
 
     fill_bkg_rect(DEVICE_SCREEN_X_OFFSET, DEVICE_SCREEN_Y_OFFSET + VIEWPORT_Y_OFS, DEVICE_SCREEN_WIDTH, DEVICE_SCREEN_HEIGHT, 0);
@@ -434,22 +470,20 @@ void init_level(void)
     set_music(current_stage->music);
 
     //background
-    w = 0;
     for( i = 0; i != VIEWPORT_WIDTH+1 + BUF_PRELOAD_WIDTH; i++ )
     {
-        for(j = 0; j < 16; j++)
-        {
-            UBYTE B = current_stage->map[w+j];
-            buf[(w & 0x1F0)+j] = B;
-        }
-        if(i < VIEWPORT_WIDTH+1)
-        {
-            set_bkg_tiles((VIEWPORT_X_OFS + i) & (DEVICE_SCREEN_BUFFER_WIDTH - 1),
-                          2 + VIEWPORT_Y_OFS,
-                          1,
-                          16,
-                          &buf[w & 0x1F0]);
-        }
+        SET_BANK(g_current_map_bank);
+        copy_map_column_to_buf(i);
+        RESTORE_BANK();
+    }
+    w = 0;
+    for( i = 0; i != VIEWPORT_WIDTH+1; i++ )
+    {
+        set_bkg_tiles((VIEWPORT_X_OFS + i) & (DEVICE_SCREEN_BUFFER_WIDTH - 1),
+                      2 + VIEWPORT_Y_OFS,
+                      1,
+                      16,
+                      &buf[w]);
         w += 16;
     }
     if(VIEWPORT_X_OFS != 0)
@@ -518,7 +552,10 @@ void update_level(void)
             tile_pos++;
             if( tile_pos < 236 )
             {
-                update_column(tile_pos);
+                SET_BANK(g_current_map_bank);
+                copy_map_column_to_buf(tile_pos + VIEWPORT_WIDTH + BUF_PRELOAD_WIDTH);
+                RESTORE_BANK();
+                update_screen_column_from_buf(tile_pos + VIEWPORT_WIDTH);
             }
 #if defined(MASTERSYSTEM) || defined(NINTENDO_NES)
             if(VIEWPORT_X_OFS != 0)

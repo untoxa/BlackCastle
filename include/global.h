@@ -4,7 +4,6 @@
 #include <gbdk/platform.h>
 
 #include "data.h"
-#include "data2.h"
 #include "rand.h"
 #include "player.h"
 #include "monster.h"
@@ -223,6 +222,10 @@ extern UBYTE level_len;
 extern UWORD high_score;
 
 // Global map pointer and map bank, used by update_column
+extern UBYTE* g_meta_lookup_tl;
+extern UBYTE* g_meta_lookup_tr;
+extern UBYTE* g_meta_lookup_bl;
+extern UBYTE* g_meta_lookup_br;
 extern UBYTE* g_current_map;
 extern UBYTE g_current_map_bank;
 
@@ -257,6 +260,10 @@ typedef struct level_t {
     UBYTE bank_hud;
     UBYTE * hud_tiles;
     UBYTE * hud_map;
+    UBYTE * meta_lookup_tl;
+    UBYTE * meta_lookup_tr;
+    UBYTE * meta_lookup_bl;
+    UBYTE * meta_lookup_br;
     level_minor_t minor[4];
 } level_t;
 
@@ -288,23 +295,16 @@ BANKREF_EXTERN(end_map)
 #define ENEMY_SPAWN_POS_X 176
 #define ENEMY_SPAWN_POS_TILE_X (ENEMY_SPAWN_POS_X >> 3)
 
-inline void update_column(UBYTE pos)
+inline void update_screen_column_from_buf(UBYTE pos)
 {
-    UBYTE j;
-    UBYTE i = (tile_pos + VIEWPORT_WIDTH + 0) & (DEVICE_SCREEN_BUFFER_WIDTH - 1);
-    UWORD w = (pos + VIEWPORT_WIDTH + BUF_PRELOAD_WIDTH) << 4;
+    UBYTE i = pos & (DEVICE_SCREEN_BUFFER_WIDTH - 1);
+    UWORD w = pos << 4;
     UWORD wmod = w & 0x1F0;
-    SET_BANK(g_current_map_bank);
-    for(j = 0; j < 16; j++)
-        buf[wmod+j] = g_current_map[w+j];
-    w = (pos + VIEWPORT_WIDTH + 0) << 4;
-    wmod = w & 0x1F0;
     set_bkg_tiles((VIEWPORT_X_OFS + i) & (DEVICE_SCREEN_BUFFER_WIDTH - 1),
                   VIEWPORT_Y_OFS + 2,
                   1,
                   16,
                   &buf[wmod]);
-    RESTORE_BANK();
 }
 
 void move_sprite_clip(uint8_t nb, uint8_t x, uint8_t y);
