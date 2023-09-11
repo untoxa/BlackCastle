@@ -261,6 +261,7 @@ void init_title(void)
     level_min = 1;
 
     //background
+    SET_BANK(BANK(title_tiles));
     set_bkg_data(0,177, title_tiles);
     w = 0;
     for( i = 0; i != 20; i++ )
@@ -269,6 +270,7 @@ void init_title(void)
         w += 18;
     }
     move_bkg(0,0);
+    RESTORE_BANK();
 
     //set high score
     for( i = 0; i != 4; i++ )
@@ -519,11 +521,10 @@ void update_level(void)
     update_player_shot();
     SET_BANK(1);
     update_item();
-    SET_BANK(2);
+
     update_monster();
 
     update_boss();
-    SET_BANK(2);
 
     update_monster_shot();
     SET_BANK(1);
