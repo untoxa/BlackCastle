@@ -1,6 +1,8 @@
 #ifndef _SFX_DATA_H_
 #define _SFX_DATA_H_
 
+BANKREF_EXTERN(sfx_data)
+
 extern const unsigned char shot_sound[][5];
 extern const unsigned char crystal_sound[][6];
 extern const unsigned char heart_sound[][6];

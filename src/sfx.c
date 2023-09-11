@@ -1,5 +1,3 @@
-#pragma bank 3
-
 #include <gbdk/platform.h>
 
 #include "global.h"
@@ -94,7 +92,7 @@ inline void set_ch4_regs(uint8_t nr41, uint8_t nr42, uint8_t tone, uint8_t nr44)
 void play_sound(void) NONBANKED
 {
 #if defined(NINTENDO) || defined(NINTENDO_NES)
-    SET_BANK(3);
+    SET_BANK(BANK(sfx_data));
     if( sound_cnt_ch4 != 0 )
     {
         sound_cnt_ch4--;

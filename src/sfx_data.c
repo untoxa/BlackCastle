@@ -1,9 +1,11 @@
-#pragma bank 3
+#pragma bank 255
 
 #include <gbdk/platform.h>
 
 #include "global.h"
 #include "music.h"
+
+BANKREF(sfx_data)
 
 const unsigned char shot_sound[][5] =
 {
