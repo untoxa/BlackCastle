@@ -1,6 +1,8 @@
 #ifndef _MUSIC_DATA_H_
 #define _MUSIC_DATA_H_
 
+BANKREF_EXTERN(music_data)
+
 extern const unsigned char title_music_lead[];
 extern const unsigned char title_music_bass[];
 extern const unsigned char title_music_rythm[];

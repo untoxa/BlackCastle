@@ -7,12 +7,10 @@
 #define TILE_HEIGHT         8
 #define NUM_BYTES_PER_TILE  16
 
-#ifdef SEGA
-
-uint8_t flipped_data[NUM_BYTES_PER_TILE];
+static uint8_t flipped_data[NUM_BYTES_PER_TILE];
 
 // Table for fast reversing of bits in a byte - used for flipping in X
-const uint8_t reverse_bits[256] = {
+static const uint8_t reverse_bits[256] = {
     0x00,0x80,0x40,0xC0,0x20,0xA0,0x60,0xE0,0x10,0x90,0x50,0xD0,0x30,0xB0,0x70,0xF0,
     0x08,0x88,0x48,0xC8,0x28,0xA8,0x68,0xE8,0x18,0x98,0x58,0xD8,0x38,0xB8,0x78,0xF8,
     0x04,0x84,0x44,0xC4,0x24,0xA4,0x64,0xE4,0x14,0x94,0x54,0xD4,0x34,0xB4,0x74,0xF4,
@@ -35,12 +33,12 @@ const uint8_t reverse_bits[256] = {
 // Note this assumes 2BPP tile in GB format, where bitplanes are interleaved.
 // Currently all platforms use GB format for 2BPP tile data storage, irrespective
 // of what their native tile format is, as set_sprite_data handles the conversion.
-void set_tile(uint8_t tile_idx, uint8_t* data, uint8_t flip_x, uint8_t flip_y)
+static void set_tile(uint8_t tile_idx, uint8_t* data, uint8_t flip_x, uint8_t flip_y)
 {
     size_t i;
     for(i = 0; i < TILE_HEIGHT; i++)
     {
-        size_t y = flip_y ? (TILE_HEIGHT-1-i) : i; 
+        size_t y = flip_y ? (TILE_HEIGHT-1-i) : i;
         flipped_data[2*i] = flip_x ? reverse_bits[data[2*y]] : data[2*y];
         flipped_data[2*i+1] = flip_x ? reverse_bits[data[2*y+1]] : data[2*y+1];
     }
@@ -55,5 +53,3 @@ void set_sprite_data_flipx(uint8_t first_tile, uint8_t nb_tiles, const uint8_t *
         set_tile(first_tile+i, &data[NUM_BYTES_PER_TILE*i], 1, 0);
     }
 }
-
-#endif

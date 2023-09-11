@@ -59,8 +59,8 @@
 #define KEY_TICKED(K)   ((input & (K)) && !(old_input & (K)))
 #define KEY_RELEASED(K) ((old_input & (K)) && !(input & (K)))
 
-#define SET_BANK(N)     SWITCH_ROM(N); old_bank = bank; bank = N
-#define RESTORE_BANK()  SWITCH_ROM(old_bank); bank = old_bank
+#define SET_BANK(N)     old_bank = _current_bank, SWITCH_ROM(N)
+#define RESTORE_BANK()  SWITCH_ROM(old_bank)
 
 #define GS_TITLE                0
 #define GS_LEVEL                1

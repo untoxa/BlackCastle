@@ -11,8 +11,7 @@ UBYTE input = 0;
 UBYTE old_input;
 
 //bank
-UBYTE bank = 1;
-UBYTE old_bank;
+UBYTE old_bank = 1;
 
 //background
 BYTE scroll;
@@ -53,7 +52,7 @@ UBYTE g_current_map_bank;
 UBYTE g_num_clipping_sprites;
 
 const state_handler_t state_handlers[] = {
-    enter_title, enter_level, enter_end 
+    enter_title, enter_level, enter_end
 };
 
 #define OBJ_CRYSTAL             0
@@ -228,7 +227,7 @@ void copy_map_column_to_buf(UBYTE pos)
     UWORD w = i << 4;
     UWORD wmod = w & 0x1E0;
     for(j = 0; j < 8; j++)
-    {    
+    {
         UBYTE metaidx = g_current_map[((i >> 1) << 3) + j];
         buf[wmod +  0 + 2*j+0] = g_meta_lookup_tl[metaidx];
         buf[wmod +  0 + 2*j+1] = g_meta_lookup_bl[metaidx];
@@ -241,26 +240,26 @@ void init_title(void)
 {
     UBYTE i,j;
     UWORD w;
-    
+
     SET_BANK(1);
-    
+
     clear_all();
     fill_bkg_rect(DEVICE_SCREEN_X_OFFSET, DEVICE_SCREEN_Y_OFFSET, DEVICE_SCREEN_WIDTH, DEVICE_SCREEN_HEIGHT, 0);
-    
+
     sound_cnt_ch1 = 0;
     sound_cnt_ch4 = 0;
-    
+
     //player
     player_sht = PST_SWORD;
     //player_sht = PST_AXE;
     //player_sht = PST_MACE;
     player_lif = 4;
     player_score = 0;
-    
+
     //level
     level_maj = 1;
     level_min = 1;
-    
+
     //background
     set_bkg_data(0,177, title_tiles);
     w = 0;
@@ -270,52 +269,52 @@ void init_title(void)
         w += 18;
     }
     move_bkg(0,0);
-    
+
     //set high score
     for( i = 0; i != 4; i++ )
     {
         j = (high_score >> (i<<2)) & 0x0F;
         set_bkg_tiles(VIEWPORT_X_OFS + 10-i, VIEWPORT_Y_OFS + 17,1,1,&title_numbers[j]);
     }
-    
+
 }
 
 void enter_title(void)
 {
     UBYTE i;
-    
+
     init_title();
-    
+
     set_music(TITLE_MUSIC);
-    
+
     SHOW_BKG;
     DISPLAY_ON;
-    
+
     fade_from_white();
-    
+
     while( game_state == GS_TITLE )
     {
-        UPDATE_KEYS();  
-        
+        UPDATE_KEYS();
+
         if( KEY_TICKED(J_START) )
         {
             stop_music();
             set_sound(SND_START);
-            
+
             for( i = 0; i != 4; i++ )
             {
                 play_sound();
                 wait_vbl_done();
             }
-            
+
             fade_to_white();
             DISPLAY_OFF;
             game_state = GS_LEVEL;
         }
-        
+
         play_music();
         wait_vbl_done();
-    }   
+    }
 }
 
 //
@@ -327,7 +326,7 @@ void enter_title(void)
 inline UBYTE add_clipping_sprites(void)
 {
     UBYTE i = 0, spr_idx = 0;
-#if defined(CLIP_SPRITES_X)    
+#if defined(CLIP_SPRITES_X)
     // Hiding of right scroll seam (only on non-boss levels)
     if(level_min != 4)
     {
@@ -366,9 +365,9 @@ inline UBYTE add_clipping_sprites(void)
 
 void init_level(void)
 {
-    UBYTE i, j;
+    UBYTE i;
     UWORD w;
-    
+
     const level_t * current_level = &levels[level_maj - 1];
     const level_minor_t * current_stage = &(current_level->minor[level_min - 1]);
     g_current_map = current_stage->map;
@@ -400,7 +399,7 @@ void init_level(void)
         // Boss sprite tiles (no flipping needed - overwrite monster tiles)
         set_sprite_data(ST_BOSS_BAT0 & 0xFE, ST_NUM_BOSS, current_level->sprites_bosses);
     }
-    
+
 #if defined(CLIP_SPRITES_X) || defined(CLIP_SPRITES_Y)
     set_sprite_data(SPRITE_MASK_TILE_INDEX, 2, scroll_seam_hide_tile);
 #endif
@@ -412,7 +411,7 @@ void init_level(void)
 #else
     g_num_clipping_sprites = 0;
 #endif
-    
+
     //player
     player_x = 32;
     player_y = 112;
@@ -423,16 +422,16 @@ void init_level(void)
     player_att = 0;
     player_dmg = 0;
     player_prp = 0;
-    
+
     player_spr0 = get_sprite();
     player_spr1 = get_sprite();
-    
+
     set_sprite_tile(player_spr0,ST_PLAYER_IDLE0);
     set_sprite_tile(player_spr1,ST_PLAYER_IDLE1);
-    
+
     move_sprite_clip(player_spr0,    SPRITE_OFS_X + player_x,    SPRITE_OFS_Y + player_y+16);
     move_sprite_clip(player_spr1,    SPRITE_OFS_X + player_x+8,  SPRITE_OFS_Y + player_y+16);
-    
+
     //hud
     SET_BANK(current_level->bank_hud);
 #ifdef SEGA
@@ -458,14 +457,14 @@ void init_level(void)
     SET_BANK(current_level->bank_tiles);
     set_bkg_data(0, 32, current_level->tiles);
 
-    // level stage maps, data and settings 
+    // level stage maps, data and settings
     SET_BANK(current_stage->bank_map);
     level_data = current_stage->data;
     level_len = current_stage->len;
 
     if (current_stage->boss_typ) {
         new_boss(current_stage->boss_x, current_stage->boss_y, current_stage->boss_typ);
-    } 
+    }
 
     set_music(current_stage->music);
 
@@ -500,7 +499,7 @@ void init_level(void)
     tile_cnt = 0;
     tile_pos = 0;
     shake = 0;
-    
+
     //level
     level_pos = 0;
     level_ani = 0;
@@ -509,7 +508,7 @@ void init_level(void)
 void update_level(void)
 {
     UBYTE i,j,type,y;
-    
+
     scroll = 0;
     SET_BANK(2);
     update_player();
@@ -522,11 +521,10 @@ void update_level(void)
     update_item();
     SET_BANK(2);
     update_monster();
-    
-    SET_BANK(3);
+
     update_boss();
     SET_BANK(2);
-    
+
     update_monster_shot();
     SET_BANK(1);
     update_explosion();
@@ -540,7 +538,7 @@ void update_level(void)
     } else {
         set_bkg_data(13,1,candle_tiles + 16);
     }
-    
+
     //update level
     if( scroll != 0 )
     {
@@ -571,16 +569,16 @@ void update_level(void)
                 {
                     y = (level_data[++level_pos] + 2) << 3;
                     type = level_data[++level_pos];
-                    
+
                     switch( type )
                     {
                         case OBJ_CRYSTAL:
                             new_item( ENEMY_SPAWN_POS_X, y, IT_CRYSTAL );
                             break;
-                        case OBJ_HEART: 
+                        case OBJ_HEART:
                             new_item( ENEMY_SPAWN_POS_X, y, IT_HEART );
                             break;
-                        case OBJ_SWORD: 
+                        case OBJ_SWORD:
                             new_item( ENEMY_SPAWN_POS_X, y, IT_SWORD );
                             break;
                         case OBJ_AXE:
@@ -588,8 +586,8 @@ void update_level(void)
                             break;
                         case OBJ_MACE:
                             new_item( ENEMY_SPAWN_POS_X, y, IT_MACE );
-                            break;  
-                        case OBJ_FALLING_PLATFORM: 
+                            break;
+                        case OBJ_FALLING_PLATFORM:
                             new_platform( ENEMY_SPAWN_POS_X, y, PT_FALLING_PLATFORM );
                             break;
                         case OBJ_UPDOWN_PLATFORM:
@@ -598,19 +596,19 @@ void update_level(void)
                         case OBJ_LEFTRIGHT_PLATFORM:
                             new_platform( ENEMY_SPAWN_POS_X, y, PT_LEFTRIGHT_PLATFORM );
                             break;
-                        case OBJ_KNIGHT: 
+                        case OBJ_KNIGHT:
                             new_monster( ENEMY_SPAWN_POS_X, y, MT_KNIGHT );
                             break;
-                        case OBJ_BAT: 
+                        case OBJ_BAT:
                             new_monster( ENEMY_SPAWN_POS_X, y, MT_BAT );
                             break;
-                        case OBJ_REAPER: 
+                        case OBJ_REAPER:
                             new_monster( ENEMY_SPAWN_POS_X, y, MT_REAPER );
                             break;
-                        case OBJ_SPIDER: 
+                        case OBJ_SPIDER:
                             new_monster( ENEMY_SPAWN_POS_X, y, MT_SPIDER );
                             break;
-                        case OBJ_SKELETON: 
+                        case OBJ_SKELETON:
                             new_monster( ENEMY_SPAWN_POS_X, y, MT_SKELETON );
                             break;
                     }
@@ -632,13 +630,13 @@ void draw_level(void)
         move_sprite_clip(player_spr1,    SPRITE_OFS_X + player_x+8,  SPRITE_OFS_Y + player_y + 16);
     } else {
         hide_sprite(player_spr0);
-        hide_sprite(player_spr1);       
+        hide_sprite(player_spr1);
     }
     if( player_dmg != 0 )
     {
         player_dmg--;
     }
-    
+
     //player shot
     for( i = 0; i != MAX_PLAYER_SHOT; i++ )
     {
@@ -647,7 +645,7 @@ void draw_level(void)
             move_sprite_clip(player_shot_spr[i], SPRITE_OFS_X + player_shot_x[i],    SPRITE_OFS_Y + player_shot_y[i] + 16);
         }
     }
-    
+
     //item
     for( i = 0; i != MAX_ITEM; i++ )
     {
@@ -656,7 +654,7 @@ void draw_level(void)
             move_sprite_clip(item_spr[i],    SPRITE_OFS_X + item_x[i],   SPRITE_OFS_Y + item_y[i] + 16);
         }
     }
-    
+
     //platform
     for( i = 0; i != MAX_PLATFORM; i++ )
     {
@@ -666,7 +664,7 @@ void draw_level(void)
             move_sprite_clip(platform_spr1[i],   SPRITE_OFS_X + platform_x[i]+8, SPRITE_OFS_Y + platform_y[i] + 16);
         }
     }
-    
+
     //monster
     for( i = 0; i != MAX_MONSTER; i++ )
     {
@@ -682,7 +680,7 @@ void draw_level(void)
             }
         }
     }
-    
+
     //boss
     if( boss_act == TRUE )
     {
@@ -710,8 +708,8 @@ void draw_level(void)
                     move_sprite_clip(boss_spr3,  SPRITE_OFS_X + boss_x + 8,  SPRITE_OFS_Y + boss_y + 32);
                     break;
             }
-                
-            
+
+
         } else {
             switch( boss_typ )
             {
@@ -737,7 +735,7 @@ void draw_level(void)
             }
         }
     }
-    
+
     //monster shot
     for( i = 0; i != MAX_MONSTER_SHOT; i++ )
     {
@@ -746,7 +744,7 @@ void draw_level(void)
             move_sprite_clip(monster_shot_spr[i],    SPRITE_OFS_X + monster_shot_x[i],   SPRITE_OFS_Y + monster_shot_y[i] + 16);
         }
     }
-    
+
     //explosion
     for( i = 0; i != MAX_EXPLOSION; i++ )
     {
@@ -756,7 +754,7 @@ void draw_level(void)
             move_sprite_clip(explosion_spr1[i],  SPRITE_OFS_X + explosion_x[i]+8,    SPRITE_OFS_Y + explosion_y[i] + 16);
         }
     }
-    
+
     //stone
     for( i = 0; i != MAX_STONE; i++ )
     {
@@ -772,28 +770,28 @@ void lcd_isr(void);
 void enter_level(void)
 {
     UBYTE i;
-    
+
     initrand(RAND_SOURCE);
     init_level();
-    
+
 //  SHOW_SPRITES;   // set in the LCD ISR
     DISPLAY_ON;
-    
+
     add_LCD(lcd_isr);
-    
+
     fade_from_white();
-    
+
     while( game_state == GS_LEVEL )
     {
-        UPDATE_KEYS();  
-        
+        UPDATE_KEYS();
+
         update_level();
         draw_level();
-        
+
         play_sound();
-        
+
         play_music();
-        
+
 #ifndef MASTERSYSTEM
         //pause
         if(KEY_TICKED(J_START))
@@ -804,7 +802,7 @@ void enter_level(void)
             {
                 UPDATE_KEYS();
                 play_sound();
-                wait_vbl_done();    
+                wait_vbl_done();
             } while(!KEY_TICKED(J_START));
             restart_music();
         }
@@ -818,7 +816,7 @@ void enter_level(void)
             level_min++;
             break;
         }
-        
+
         //boss defeated
         if( (level_min == 4) && (boss_act == FALSE) )
         {
@@ -838,12 +836,12 @@ void enter_level(void)
                     wait_vbl_done();
                 }
             }
-            
+
             for( i = 0; i != 64; i++ )
             {
                 wait_vbl_done();
             }
-            
+
             fade_to_white();
             DISPLAY_OFF;
             level_maj++;
@@ -854,7 +852,7 @@ void enter_level(void)
             }
             break;
         }
-        
+
         //game over
         if( player_lif == 0 )
         {
@@ -870,68 +868,68 @@ void enter_level(void)
                     set_sprite_tile(player_spr0,ST_PLAYER_DROP1);
                     set_sprite_tile(player_spr1,ST_PLAYER_DROP0);
                 }
-                
+
                 if( player_vel != 25 )
                 {
                     player_vel++;
                 }
                 player_y += (player_vel >> 3);
-                
+
                 move_sprite_clip(player_spr0,    SPRITE_OFS_X + player_x,    SPRITE_OFS_Y + player_y + 16);
                 move_sprite_clip(player_spr1,    SPRITE_OFS_X + player_x+8,  SPRITE_OFS_Y + player_y + 16);
-                
+
                 play_sound();
-                
+
                 wait_vbl_done();
             }
-            
+
             for( i = 0; i != 64; i++ )
             {
                 wait_vbl_done();
             }
-            
+
             clear_sprites(g_num_clipping_sprites);
             clear_all_objects();
-            
+
             // Upload "GAME OVER" tiles (replaces gameplay tiles which are now inactive)
             set_sprite_data(0, ST_GAME_OVER_NUM_TILES, sprite_tiles_game_over);
-            
+
             //gameover sprite
             game_over_spr0 = get_sprite();
             game_over_spr1 = get_sprite();
             game_over_spr2 = get_sprite();
             game_over_spr3 = get_sprite();
-            
+
             set_sprite_tile(game_over_spr0,ST_GAME_OVER0);
             set_sprite_tile(game_over_spr1,ST_GAME_OVER1);
             set_sprite_tile(game_over_spr2,ST_GAME_OVER2);
             set_sprite_tile(game_over_spr3,ST_GAME_OVER3);
-            
+
             move_sprite_clip(game_over_spr0, SPRITE_OFS_X + 72,  SPRITE_OFS_Y + 88);
             move_sprite_clip(game_over_spr1, SPRITE_OFS_X + 80,  SPRITE_OFS_Y + 88);
             move_sprite_clip(game_over_spr2, SPRITE_OFS_X + 88,  SPRITE_OFS_Y + 88);
             move_sprite_clip(game_over_spr3, SPRITE_OFS_X + 96,  SPRITE_OFS_Y + 88);
-            
+
             set_music(GAME_OVER_MUSIC);
-            
+
             while(!KEY_TICKED(J_START))
             {
                 UPDATE_KEYS();
                 play_music();
-                wait_vbl_done();    
+                wait_vbl_done();
             }
             stop_music();
-            
+
             if( player_score > high_score )
             {
                 high_score = player_score;
             }
-            
+
             fade_to_white();
             DISPLAY_OFF;
             game_state = GS_TITLE;
         }
-        
+
         wait_vbl_done();
     }
     remove_LCD(lcd_isr);
@@ -941,12 +939,12 @@ void enter_end(void)
 {
     UBYTE i,j;
     UWORD w;
-    
+
     SET_BANK(1);
 
     clear_all();
     fill_bkg_rect(DEVICE_SCREEN_X_OFFSET, DEVICE_SCREEN_Y_OFFSET, DEVICE_SCREEN_WIDTH, DEVICE_SCREEN_HEIGHT, 0);
-    
+
     w = 0;
     for( i = 0; i != 20; i++ )
     {
@@ -954,42 +952,42 @@ void enter_end(void)
         w += 18;
     }
     move_bkg(0,0);
-    
+
     //set score
     for( i = 0; i != 4; i++ )
     {
         j = (player_score >> (i<<2)) & 0x0F;
-        set_bkg_tiles(VIEWPORT_X_OFS + 10-i,14 + VIEWPORT_Y_OFS,1,1,&hud_data[14+j]);    
+        set_bkg_tiles(VIEWPORT_X_OFS + 10-i,14 + VIEWPORT_Y_OFS,1,1,&hud_data[14+j]);
     }
-    
+
     if( player_score > high_score )
     {
         high_score = player_score;
     }
-    
+
     set_music(END_MUSIC);
-    
+
     SHOW_BKG;
     DISPLAY_ON;
-    
+
     fade_from_white();
-    
+
     while( game_state == GS_END )
     {
-        UPDATE_KEYS();  
-        
+        UPDATE_KEYS();
+
         if( KEY_TICKED(J_START) )
         {
             stop_music();
-            
+
             fade_to_white();
             DISPLAY_OFF;
             game_state = GS_TITLE;
         }
-        
+
         play_music();
         wait_vbl_done();
-    }   
+    }
 }
 
 void move_sprite_clip(uint8_t nb, uint8_t x, uint8_t y)

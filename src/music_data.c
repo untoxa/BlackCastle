@@ -5,6 +5,8 @@
 #include "global.h"
 #include "music.h"
 
+BANKREF(music_data)
+
 const unsigned char title_music_lead[] =
 {
 	18,E5,2,BRK,18,A4,2,BRK,18,E5,2,BRK,18,A4,2,BRK,18,F5,2,BRK,18,A4,2,BRK,18,E5,2,BRK,18,A4,2,BRK,
