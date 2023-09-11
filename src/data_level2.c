@@ -1,4 +1,4 @@
-#pragma bank 4
+#pragma bank 255
 
 #include "global.h"
 #include "data.h"
