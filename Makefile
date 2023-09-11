@@ -2,7 +2,9 @@ SHELL := /bin/bash
 
 # If you move this project you can change the directory
 # to match your GBDK root directory (ex: GBDK_HOME = "C:/GBDK/"
+ifndef GBDK_HOME
 GBDK_HOME = ../gbdk-2020/build/gbdk/
+endif
 LCC = $(GBDK_HOME)bin/lcc
 
 # Set platforms to build here, spaced separated. (These are in the separate Makefile.targets)
@@ -12,16 +14,16 @@ LCC = $(GBDK_HOME)bin/lcc
 TARGETS=nes gb megaduck gg sms pocket
 
 # Configure platform specific LCC flags here:
-LCCFLAGS_gb      = -Wl-yt0x19 -Wl-yo4 -Wm-yS -Wm-yn"$(PROJECTNAME)"
-LCCFLAGS_pocket  = -Wl-yt0x19 -Wl-yo4 -Wm-yS -Wm-yn"$(PROJECTNAME)"
-LCCFLAGS_duck    = -Wl-yt0x19 -Wl-yo4 -Wm-yS -Wm-yn"$(PROJECTNAME)"
-LCCFLAGS_sms     = -Wl-yo4 -Wm-yS
-LCCFLAGS_gg      = -Wl-yo4 -Wm-yS
-LCCFLAGS_nes     = -Wl-yt0x19 -Wl-yo4 -Wm-yS
+LCCFLAGS_gb      = -Wl-yt0x19 -Wm-yS -Wm-yn"$(PROJECTNAME)"
+LCCFLAGS_pocket  = -Wl-yt0x19 -Wm-yS -Wm-yn"$(PROJECTNAME)"
+LCCFLAGS_duck    = -Wl-yt0x19 -Wm-yS -Wm-yn"$(PROJECTNAME)"
+LCCFLAGS_sms     = -Wm-yS
+LCCFLAGS_gg      = -Wm-yS
+LCCFLAGS_nes     = -Wl-yt0x19 -Wm-yS
 
 LCCFLAGS += $(LCCFLAGS_$(EXT)) # This adds the current platform specific LCC Flags
 
-LCCFLAGS += -Wl-j -Wm-yoA -Wm-ya4 -autobank -Wb-ext=.rel -Wb-v # MBC + Autobanking related flags
+LCCFLAGS += -Wl-j -Wm-yoA -autobank -Wb-ext=.rel -Wb-v # MBC + Autobanking related flags
 LCCFLAGS += -Wl-j -Wl-w
 LCCFLAGS += -debug # Uncomment to enable debug output
 LCCFLAGS += -v     # Uncomment for lcc verbose output
