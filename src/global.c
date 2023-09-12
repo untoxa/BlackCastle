@@ -529,14 +529,16 @@ void update_level(void)
 
     update_stone();
 
-    //candel
-    level_ani++;
-    if( (level_ani & 8) == 0 )
-    {
-        set_bkg_data(13,1,candle_tiles);
-    } else {
-        set_bkg_data(13,1,candle_tiles + 16);
+#ifndef GAMEGEAR
+    switch (++level_ani & 7) {
+        case 0:
+            set_bkg_data(13,1,candle_tiles + 16);
+            break;
+        case 2:
+            set_bkg_data(13,1,candle_tiles);
+            break;
     }
+#endif
 
     SET_BANK(BANK(monster_data));
     //update level

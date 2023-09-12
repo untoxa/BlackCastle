@@ -32,6 +32,10 @@ void vbl_isr(void) {
 void vbl_isr(void) {
     if (_shadow_OAM_OFF) return;
     if (game_state == GS_LEVEL) {
+#ifdef GAMEGEAR
+        VDP_CMD = 0, VDP_CMD = VDP_RSCX;
+        if (shake) shake--;
+#else
         if (shake) {
             shake--;
             VDP_CMD = (shake & 1) ? -(scroll_pos + 1) : -(scroll_pos - 1);
@@ -39,10 +43,30 @@ void vbl_isr(void) {
             VDP_CMD = -scroll_pos;
         }
         VDP_CMD = VDP_RSCX;
+#endif
+        switch (++level_ani & 7) {
+            case 0:
+                set_bkg_data(13,1,candle_tiles + 16);
+                break;
+            case 2:
+                set_bkg_data(13,1,candle_tiles);
+                break;
+        }
     }
 }
 
 void lcd_isr(void) {
+#ifdef GAMEGEAR
+    if (_shadow_OAM_OFF) return;
+    if (game_state == GS_LEVEL) {
+        if (shake) {
+            VDP_CMD = (shake & 1) ? -(scroll_pos + 1) : -(scroll_pos - 1);
+        } else {
+            VDP_CMD = -scroll_pos;
+        }
+        VDP_CMD = VDP_RSCX;
+    }
+#endif
 }
 
 #elif defined(NINTENDO_NES)
@@ -104,9 +128,15 @@ void main(void)
 #elif defined(SEGA)
     set_sprite_palette_entry(0,4, RGB8(255, 255, 255));
     CRITICAL {
+        add_LCD(lcd_isr);
         add_VBL(vbl_isr);
     }
+#ifdef GAMEGEAR
+    set_interrupts (VBL_IFLAG | LCD_IFLAG);
+    __WRITE_VDP_REG(VDP_R10, 38);
+#else
     set_interrupts (VBL_IFLAG);
+#endif
     __WRITE_VDP_REG(VDP_R0, __READ_VDP_REG(VDP_R0) | R0_HSCRL_INH | R0_LCB);
 #elif defined(NINTENDO_NES)
     add_VBL(vbl_isr);
