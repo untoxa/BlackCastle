@@ -103,48 +103,40 @@ void add_score(UBYTE value)
 
 void update_hud(UBYTE type)
 {
-    UBYTE i,j;
-
     switch( type )
     {
         case HUD_WEAPON:
-            if( player_sht == 0 )
-            {
-                set_bkg_tiles(VIEWPORT_X_OFS + 12,VIEWPORT_Y_OFS,1,2,&hud_data[0]);
-                set_bkg_tiles(VIEWPORT_X_OFS + 13,VIEWPORT_Y_OFS,1,2,&hud_data[2]);
-            }
-            if( player_sht == 1 )
-            {
-                set_bkg_tiles(VIEWPORT_X_OFS + 12,VIEWPORT_Y_OFS,1,2,&hud_data[4]);
-                set_bkg_tiles(VIEWPORT_X_OFS + 13,VIEWPORT_Y_OFS,1,2,&hud_data[6]);
-            }
-            if( player_sht == 2 )
-            {
-                set_bkg_tiles(VIEWPORT_X_OFS + 12,VIEWPORT_Y_OFS,1,2,&hud_data[8]);
-                set_bkg_tiles(VIEWPORT_X_OFS + 13,VIEWPORT_Y_OFS,1,2,&hud_data[10]);
+            switch (player_sht) {
+                case 0:
+                    set_bkg_tiles(VIEWPORT_X_OFS + 12,VIEWPORT_Y_OFS,1,2,&hud_data[0]);
+                    set_bkg_tiles(VIEWPORT_X_OFS + 13,VIEWPORT_Y_OFS,1,2,&hud_data[2]);
+                    break;
+                case 1:
+                    set_bkg_tiles(VIEWPORT_X_OFS + 12,VIEWPORT_Y_OFS,1,2,&hud_data[4]);
+                    set_bkg_tiles(VIEWPORT_X_OFS + 13,VIEWPORT_Y_OFS,1,2,&hud_data[6]);
+                    break;
+                case 2:
+                    set_bkg_tiles(VIEWPORT_X_OFS + 12,VIEWPORT_Y_OFS,1,2,&hud_data[8]);
+                    set_bkg_tiles(VIEWPORT_X_OFS + 13,VIEWPORT_Y_OFS,1,2,&hud_data[10]);
+                    break;
             }
             break;
         case HUD_LIFE:
-            for( i = 0; i != 4; i++ )
+            for (UBYTE i = 0; i != 4; i++)
             {
-                if( i <= (player_lif-1) )
-                {
-                    set_bkg_tiles(VIEWPORT_X_OFS + 7+i,1 + VIEWPORT_Y_OFS,1,1,&hud_data[12]);
-                } else {
-                    set_bkg_tiles(VIEWPORT_X_OFS + 7+i,1 + VIEWPORT_Y_OFS,1,1,&hud_data[13]);
-                }
+                set_bkg_tiles(VIEWPORT_X_OFS + 7 + i, 1 + VIEWPORT_Y_OFS, 1, 1, (i < player_lif) ? &hud_data[12] : &hud_data[13]);
             }
             break;
         case HUD_SCORE:
-            for( i = 0; i != 4; i++ )
+            for (UBYTE i = 0; i != 4; i++)
             {
-                j = (player_score >> (i<<2)) & 0x0F;
-                set_bkg_tiles(VIEWPORT_X_OFS + 3-i,1 + VIEWPORT_Y_OFS,1,1,&hud_data[14+j]);
+                UBYTE j = (player_score >> (i << 2)) & 0x0F;
+                set_bkg_tiles(VIEWPORT_X_OFS + 3 - i, 1 + VIEWPORT_Y_OFS, 1, 1, &hud_data[14 + j]);
             }
             break;
         case HUD_LEVEL:
-            set_bkg_tiles(VIEWPORT_X_OFS + 15,1 + VIEWPORT_Y_OFS,1,1,&hud_data[14+level_maj]);
-            set_bkg_tiles(VIEWPORT_X_OFS + 17,1 + VIEWPORT_Y_OFS,1,1,&hud_data[14+level_min]);
+            set_bkg_tiles(VIEWPORT_X_OFS + 15, 1 + VIEWPORT_Y_OFS, 1, 1, &hud_data[14 + level_maj]);
+            set_bkg_tiles(VIEWPORT_X_OFS + 17, 1 + VIEWPORT_Y_OFS, 1, 1, &hud_data[14 + level_min]);
             break;
     }
 }
