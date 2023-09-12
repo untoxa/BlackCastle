@@ -241,8 +241,6 @@ void init_title(void)
     UBYTE i,j;
     UWORD w;
 
-    SET_BANK(1);
-
     clear_all();
     fill_bkg_rect(DEVICE_SCREEN_X_OFFSET, DEVICE_SCREEN_Y_OFFSET, DEVICE_SCREEN_WIDTH, DEVICE_SCREEN_HEIGHT, 0);
 
@@ -531,7 +529,6 @@ void update_level(void)
 
     update_stone();
 
-    SET_BANK(2);
     //candel
     level_ani++;
     if( (level_ani & 8) == 0 )
@@ -541,6 +538,7 @@ void update_level(void)
         set_bkg_data(13,1,candle_tiles + 16);
     }
 
+    SET_BANK(BANK(monster_data));
     //update level
     if( scroll != 0 )
     {
@@ -941,8 +939,6 @@ void enter_end(void)
 {
     UBYTE i,j;
     UWORD w;
-
-    SET_BANK(1);
 
     clear_all();
     fill_bkg_rect(DEVICE_SCREEN_X_OFFSET, DEVICE_SCREEN_Y_OFFSET, DEVICE_SCREEN_WIDTH, DEVICE_SCREEN_HEIGHT, 0);

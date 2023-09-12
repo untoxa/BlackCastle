@@ -65,7 +65,7 @@
 #define GS_TITLE                0
 #define GS_LEVEL                1
 #define GS_END                  2
-        
+
 #define FALSE                   0
 #define TRUE                    1
 
@@ -135,7 +135,7 @@
 #define ST_EXPLOSION4           186u + ST_OFFSET
 #define ST_EXPLOSION5           188u + ST_OFFSET
 #define ST_NUM_NOFLIP           46u
-// "GAME OVER" tiles are uploaded after hiding all other sprites - can reuse tiles 
+// "GAME OVER" tiles are uploaded after hiding all other sprites - can reuse tiles
 #define ST_GAME_OVER0           0u + ST_OFFSET
 #define ST_GAME_OVER1           2u + ST_OFFSET
 #define ST_GAME_OVER2           4u + ST_OFFSET
@@ -291,6 +291,7 @@ BANKREF_EXTERN(level3_2_map)
 BANKREF_EXTERN(level3_3_map)
 BANKREF_EXTERN(level3_4_map)
 BANKREF_EXTERN(end_map)
+BANKREF_EXTERN(monster_data)
 
 #define ENEMY_SPAWN_POS_X 176
 #define ENEMY_SPAWN_POS_TILE_X (ENEMY_SPAWN_POS_X >> 3)

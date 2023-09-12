@@ -4,37 +4,39 @@
 
 #include "global.h"
 
+BANKREF(monster_data)
+
 const unsigned char level1_1_data[] =
 {
-    22,10,OBJ_KNIGHT,   
-    33,8,OBJ_BAT,   
-    36,9,OBJ_BAT,   
-    49,8,OBJ_KNIGHT,    
-    68,5,OBJ_AXE,   
-    80,11,OBJ_BAT,  
-    82,11,OBJ_BAT,  
-    87,9,OBJ_UPDOWN_PLATFORM, 
-    90,0,OBJ_CRYSTAL,   
-    92,0,OBJ_HEART, 
-    94,0,OBJ_CRYSTAL,   
-    96,7,OBJ_KNIGHT,    
-    101,9,OBJ_UPDOWN_PLATFORM, 
-    116,7,OBJ_REAPER, 
-    125,7,OBJ_UPDOWN_PLATFORM, 
-    139,5,OBJ_KNIGHT,   
-    154,0,OBJ_CRYSTAL,  
-    156,0,OBJ_MACE, 
-    163,6,OBJ_BAT,  
-    166,7,OBJ_BAT,  
-    185,9,OBJ_REAPER, 
-    193,6,OBJ_BAT,  
-    194,8,OBJ_BAT,  
+    22,10,OBJ_KNIGHT,
+    33,8,OBJ_BAT,
+    36,9,OBJ_BAT,
+    49,8,OBJ_KNIGHT,
+    68,5,OBJ_AXE,
+    80,11,OBJ_BAT,
+    82,11,OBJ_BAT,
+    87,9,OBJ_UPDOWN_PLATFORM,
+    90,0,OBJ_CRYSTAL,
+    92,0,OBJ_HEART,
+    94,0,OBJ_CRYSTAL,
+    96,7,OBJ_KNIGHT,
+    101,9,OBJ_UPDOWN_PLATFORM,
+    116,7,OBJ_REAPER,
+    125,7,OBJ_UPDOWN_PLATFORM,
+    139,5,OBJ_KNIGHT,
+    154,0,OBJ_CRYSTAL,
+    156,0,OBJ_MACE,
+    163,6,OBJ_BAT,
+    166,7,OBJ_BAT,
+    185,9,OBJ_REAPER,
+    193,6,OBJ_BAT,
+    194,8,OBJ_BAT,
     196,9,OBJ_BAT,
     207,6,OBJ_BAT,
     210,7,OBJ_BAT,
-    228,10,OBJ_KNIGHT,  
+    228,10,OBJ_KNIGHT,
     238,7,OBJ_BAT,
-    240,9,OBJ_BAT,      
+    240,9,OBJ_BAT,
     0
 };
 
@@ -226,7 +228,7 @@ const unsigned char level3_1_data[] =
     33,3,OBJ_BAT,
     43,10,OBJ_KNIGHT,
     57,4,OBJ_REAPER,
-    63,8,OBJ_LEFTRIGHT_PLATFORM,        
+    63,8,OBJ_LEFTRIGHT_PLATFORM,
     76,6,OBJ_SKELETON,
     83,11,OBJ_SWORD,
     85,11,OBJ_CRYSTAL,
@@ -252,7 +254,7 @@ const unsigned char level3_1_data[] =
     230,6,OBJ_BAT,
     232,8,OBJ_BAT,
     234,7,OBJ_BAT,
-    248,12,OBJ_KNIGHT,  
+    248,12,OBJ_KNIGHT,
     0
 };
 
