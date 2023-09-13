@@ -1,17 +1,41 @@
 #pragma bank 1
 
 #include <gbdk/platform.h>
+#include <stdint.h>
 
 #include "global.h"
 
 #include "music_data.h"
 
-inline UBYTE translete_env(UBYTE env) {
-#ifdef MEGADUCK
-    return ((UBYTE)(env << 4) | (UBYTE)(env >> 4));
-#else
-    return env;
-#endif
+
+inline uint8_t translate_envelope(uint8_t value) {
+    #ifdef MEGADUCK
+        // Mega Duck has nybbles swapped for NR12, NR22, NR42 audio envelope registers
+        return ((uint8_t)(value << 4) | (uint8_t)(value >> 4));
+    #else
+        return value;
+    #endif
+}
+
+inline uint8_t translate_frequency(uint8_t value) {
+    #ifdef MEGADUCK
+        // Mega Duck has nybbles swapped for NR43 frequency & randomness audio register
+        return ((uint8_t)(value << 4) | (uint8_t)(value >> 4));
+    #else
+        return value;
+    #endif
+}
+
+inline uint8_t translate_volume(uint8_t value) {
+    #ifdef MEGADUCK
+        // Mega Duck has bit values changed for NR32 volume register
+        // To translate the volume: New Volume = ((0x00 - Volume) & 0x60)
+        // GB: Bits:6..5 : 00 = mute, 01 = 100%, 10 = 50%, 11 = 25%
+        // MD: Bits:6..5 : 00 = mute, 11 = 100%, 10 = 50%, 01 = 25%
+        return ((~(uint8_t)value) + 1u) & (uint8_t)0x60u;
+    #else
+        return value;
+    #endif
 }
 
 extern const UWORD frequency[];
@@ -276,7 +300,7 @@ void play_music(void) BANKED
                 } else {
                     NR10_REG = 0;
                     NR11_REG = inst_ch1;
-                    NR12_REG = translete_env(vol_ch1);
+                    NR12_REG = translate_envelope(vol_ch1);
                     NR13_REG = freq & 0x00FF;
                     NR14_REG = 0x80 | ((freq >> 8) & 0x0007);
                 }
@@ -305,7 +329,7 @@ void play_music(void) BANKED
                 NR24_REG = 0;
             } else {
                 NR21_REG = inst_ch2;
-                NR22_REG = translete_env(vol_ch2);
+                NR22_REG = translate_envelope(vol_ch2);
                 NR23_REG = freq & 0x00FF;
                 NR24_REG = 0x80 | ((freq >> 8) & 0x0007);
             }
@@ -335,7 +359,7 @@ void play_music(void) BANKED
             } else {
                 NR30_REG = 0x80;
                 NR31_REG = 0xFF;
-                NR32_REG = translete_env(0x20);
+                NR32_REG = translate_volume(0x20);
                 NR33_REG = freq & 0x00FF;
                 NR34_REG = 0x80 | ((freq >> 8) & 0x0007);
             }
@@ -364,8 +388,8 @@ void play_music(void) BANKED
                     NR44_REG = 0;
                 } else {
                     NR41_REG = 0xFF;
-                    NR42_REG = translete_env(0x90);
-                    NR43_REG = translete_env(cwd);
+                    NR42_REG = translate_envelope(0x90);
+                    NR43_REG = translate_frequency(cwd);
                     NR44_REG = 0x80;
                 }
             }
