@@ -29,21 +29,18 @@ void vbl_isr(void) {
 
 #elif defined(SEGA)
 
+static uint8_t scroll_target = 0;
 void vbl_isr(void) {
     if (_shadow_OAM_OFF) return;
     if (game_state == GS_LEVEL) {
-#ifdef GAMEGEAR
-        VDP_CMD = 0, VDP_CMD = VDP_RSCX;
-        if (shake) shake--;
-#else
         if (shake) {
             shake--;
-            VDP_CMD = (shake & 1) ? -(scroll_pos + 1) : -(scroll_pos - 1);
+            scroll_target = (shake & 1) ? -(scroll_pos + 1) : -(scroll_pos - 1);
         } else {
-            VDP_CMD = -scroll_pos;
+            scroll_target = -scroll_pos;
         }
-        VDP_CMD = VDP_RSCX;
-#endif
+#ifdef GAMEGEAR
+        VDP_CMD = 0, VDP_CMD = VDP_RSCX;
         switch (++level_ani & 7) {
             case 0:
                 set_bkg_data(13,1,candle_tiles + 16);
@@ -52,6 +49,9 @@ void vbl_isr(void) {
                 set_bkg_data(13,1,candle_tiles);
                 break;
         }
+#else
+        VDP_CMD = scroll_target, VDP_CMD = VDP_RSCX;
+#endif
     }
 }
 
@@ -59,12 +59,7 @@ void lcd_isr(void) {
 #ifdef GAMEGEAR
     if (_shadow_OAM_OFF) return;
     if (game_state == GS_LEVEL) {
-        if (shake) {
-            VDP_CMD = (shake & 1) ? -(scroll_pos + 1) : -(scroll_pos - 1);
-        } else {
-            VDP_CMD = -scroll_pos;
-        }
-        VDP_CMD = VDP_RSCX;
+        VDP_CMD = scroll_target, VDP_CMD = VDP_RSCX;
     }
 #endif
 }
