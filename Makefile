@@ -29,6 +29,8 @@ LCCFLAGS += -v -Wb-v    # Uncomment for lcc verbose output
 LCCFLAGS += -Wl-u
 
 CFLAGS = -Wf-Iinclude -Wf-MMD
+CFLAGS += -debug
+
 
 # You can set the name of the ROM file here
 PROJECTNAME = blackcastle
