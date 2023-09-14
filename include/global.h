@@ -171,6 +171,9 @@
 #define ST_NUM_BOSS             52u
 // Used for masking left/right and bottom of window on SMS/NES
 #define SPRITE_MASK_TILE_INDEX  0xBEu
+// Font tile indices for start of letters / numbers. Used for end text
+#define FONT_TILE_INDEX_A       0x21
+#define FONT_TILE_INDEX_0       0x3B
 
 #define OBJ_CRYSTAL             0
 #define OBJ_HEART               1
