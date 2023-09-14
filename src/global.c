@@ -274,7 +274,7 @@ void init_title(void)
     for( i = 0; i != 4; i++ )
     {
         j = (high_score >> (i<<2)) & 0x0F;
-        set_bkg_tiles(VIEWPORT_X_OFS + 10-i, VIEWPORT_Y_OFS + 17,1,1,&title_numbers[j]);
+        set_tile_xy(VIEWPORT_X_OFS + 10-i, VIEWPORT_Y_OFS + 17, TITLE_FONT_DIGITS_OFS + j);
     }
 
 }

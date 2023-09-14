@@ -41,8 +41,9 @@
 
 extern const unsigned char scroll_seam_hide_tile[];
 extern const unsigned char candle_tiles[];
-extern const unsigned char title_numbers[];
 extern const unsigned char hud_data[];
+
+#define TITLE_FONT_DIGITS_OFS 0xa7u
 
 //sound
 extern UBYTE sound_cnt_ch1;

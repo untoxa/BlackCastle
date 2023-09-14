@@ -18,15 +18,10 @@ const unsigned char candle_tiles[] =
     0x38,0x00,0x10,0x00,0x7C,0x00,0x44,0x00
 };
 
-const unsigned char title_numbers[] =
-{
-    0xA7,0xA8,0xA9,0xAA,0xAB,0xAC,0xAD,0xAE,0xAF,0xB0
-};
-
 const unsigned char hud_data[] =
 {
     //weapon
-    0x47,0x49,0x48,0x4A,0x4B,0x4D,0x4C,0x4E,0x4F,0x51,0x50,0x52,
+    0x47,0x48,0x49,0x4A, 0x4B,0x4C,0x4D,0x4E, 0x4F,0x50,0x51,0x52,
     //life
     0x46,0x20,
     //numbers
@@ -106,37 +101,24 @@ void update_hud(UBYTE type)
     switch( type )
     {
         case HUD_WEAPON:
-            switch (player_sht) {
-                case 0:
-                    set_bkg_tiles(VIEWPORT_X_OFS + 12,VIEWPORT_Y_OFS,1,2,&hud_data[0]);
-                    set_bkg_tiles(VIEWPORT_X_OFS + 13,VIEWPORT_Y_OFS,1,2,&hud_data[2]);
-                    break;
-                case 1:
-                    set_bkg_tiles(VIEWPORT_X_OFS + 12,VIEWPORT_Y_OFS,1,2,&hud_data[4]);
-                    set_bkg_tiles(VIEWPORT_X_OFS + 13,VIEWPORT_Y_OFS,1,2,&hud_data[6]);
-                    break;
-                case 2:
-                    set_bkg_tiles(VIEWPORT_X_OFS + 12,VIEWPORT_Y_OFS,1,2,&hud_data[8]);
-                    set_bkg_tiles(VIEWPORT_X_OFS + 13,VIEWPORT_Y_OFS,1,2,&hud_data[10]);
-                    break;
-            }
+            set_bkg_tiles(VIEWPORT_X_OFS + 12,VIEWPORT_Y_OFS,2,2,&hud_data[player_sht << 2]);
             break;
         case HUD_LIFE:
             for (UBYTE i = 0; i != 4; i++)
             {
-                set_bkg_tiles(VIEWPORT_X_OFS + 7 + i, 1 + VIEWPORT_Y_OFS, 1, 1, (i < player_lif) ? &hud_data[12] : &hud_data[13]);
+                set_tile_xy(VIEWPORT_X_OFS + 7 + i, 1 + VIEWPORT_Y_OFS, (i < player_lif) ? hud_data[12] : hud_data[13]);
             }
             break;
         case HUD_SCORE:
             for (UBYTE i = 0; i != 4; i++)
             {
                 UBYTE j = (player_score >> (i << 2)) & 0x0F;
-                set_bkg_tiles(VIEWPORT_X_OFS + 3 - i, 1 + VIEWPORT_Y_OFS, 1, 1, &hud_data[14 + j]);
+                set_tile_xy(VIEWPORT_X_OFS + 3 - i, 1 + VIEWPORT_Y_OFS, hud_data[14 + j]);
             }
             break;
         case HUD_LEVEL:
-            set_bkg_tiles(VIEWPORT_X_OFS + 15, 1 + VIEWPORT_Y_OFS, 1, 1, &hud_data[14 + level_maj]);
-            set_bkg_tiles(VIEWPORT_X_OFS + 17, 1 + VIEWPORT_Y_OFS, 1, 1, &hud_data[14 + level_min]);
+            set_tile_xy(VIEWPORT_X_OFS + 15, 1 + VIEWPORT_Y_OFS, hud_data[14 + level_maj]);
+            set_tile_xy(VIEWPORT_X_OFS + 17, 1 + VIEWPORT_Y_OFS, hud_data[14 + level_min]);
             break;
     }
 }
