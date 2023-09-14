@@ -220,19 +220,19 @@ const level_t levels[] = {
     }
 };
 
-void copy_map_column_to_buf(UBYTE pos)
+void copy_map_column_to_buf(UBYTE pos, UBYTE height)
 {
     UBYTE j;
     UBYTE i = pos;
     UWORD w = i << 4;
     UWORD wmod = w & 0x1E0;
-    for(j = 0; j < 8; j++)
+    for(j = 0; j < (height >> 1); j++)
     {
         UBYTE metaidx = g_current_map[((i >> 1) << 3) + j];
-        buf[wmod +  0 + 2*j+0] = g_meta_lookup_tl[metaidx];
-        buf[wmod +  0 + 2*j+1] = g_meta_lookup_bl[metaidx];
-        buf[wmod + 16 + 2*j+0] = g_meta_lookup_tr[metaidx];
-        buf[wmod + 16 + 2*j+1] = g_meta_lookup_br[metaidx];
+        buf[wmod +      0 + 2*j+0] = g_meta_lookup_tl[metaidx];
+        buf[wmod +      0 + 2*j+1] = g_meta_lookup_bl[metaidx];
+        buf[wmod + height + 2*j+0] = g_meta_lookup_tr[metaidx];
+        buf[wmod + height + 2*j+1] = g_meta_lookup_br[metaidx];
     }
 }
 
@@ -472,7 +472,7 @@ void init_level(void)
     for( i = 0; i != VIEWPORT_WIDTH+1 + BUF_PRELOAD_WIDTH; i++ )
     {
         SET_BANK(g_current_map_bank);
-        copy_map_column_to_buf(i);
+        copy_map_column_to_buf(i, VIEWPORT_HEIGHT-2);
         RESTORE_BANK();
     }
     w = 0;
@@ -553,7 +553,7 @@ void update_level(void)
             if( tile_pos < 236 )
             {
                 SET_BANK(g_current_map_bank);
-                copy_map_column_to_buf(tile_pos + VIEWPORT_WIDTH + BUF_PRELOAD_WIDTH);
+                copy_map_column_to_buf(tile_pos + VIEWPORT_WIDTH + BUF_PRELOAD_WIDTH, VIEWPORT_HEIGHT-2);
                 RESTORE_BANK();
                 update_screen_column_from_buf(tile_pos + VIEWPORT_WIDTH);
             }
@@ -937,28 +937,44 @@ void enter_level(void)
     remove_LCD(lcd_isr);
 }
 
+// End text. Each line consists of:
+// - One byte specifying X tile coordinate (octal notation)
+// - One byte specifying Y tile coordinate (octal notation)
+// - ASCII text string
+const char end_text[] = {
+    "\003\004" "CONGRATULATION" \
+    "\006\007" "YOU HAVE" \
+    "\004\010" "DEFEATED THE" \
+    "\003\011" "EVIL FORCES OF" \
+    "\004\012" "BLACK CASTLE" \
+    "\005\015" "YOUR SCORE"
+};
+
 void enter_end(void)
 {
+    UBYTE text_x = 0, text_y = 0, text_index = 0;
+    BYTE text_delay = 1;
+    BYTE score_index = 3, score_delay = 60;
     UBYTE i,j;
-    UWORD w;
+
+    SET_BANK(BANK(end_map));
+
+    g_current_map = end_map;
 
     clear_all();
     fill_bkg_rect(DEVICE_SCREEN_X_OFFSET, DEVICE_SCREEN_Y_OFFSET, DEVICE_SCREEN_WIDTH, DEVICE_SCREEN_HEIGHT, 0);
 
-    w = 0;
-    for( i = 0; i != 20; i++ )
+    // Read one meta-column and update two columns each loop.
+    // As we won't need to use g_current_map again, use it for iteration to avoid having to add
+    // arbitrary-height multiplication to copy_map_column_to_buf routine.
+    for( i = 0; i != (VIEWPORT_WIDTH/2); i++ )
     {
-        set_bkg_tiles(VIEWPORT_X_OFS + i,VIEWPORT_Y_OFS,1,18,&end_map[w]);
-        w += 18;
+        copy_map_column_to_buf(0, VIEWPORT_HEIGHT);
+        set_bkg_tiles(VIEWPORT_X_OFS + 2*i,VIEWPORT_Y_OFS,1,VIEWPORT_HEIGHT,&buf[0]);
+        set_bkg_tiles(VIEWPORT_X_OFS + 2*i+1,VIEWPORT_Y_OFS,1,VIEWPORT_HEIGHT,&buf[VIEWPORT_HEIGHT]);
+        g_current_map += 9;
     }
     move_bkg(0,0);
-
-    //set score
-    for( i = 0; i != 4; i++ )
-    {
-        j = (player_score >> (i<<2)) & 0x0F;
-        set_bkg_tiles(VIEWPORT_X_OFS + 10-i,14 + VIEWPORT_Y_OFS,1,1,&hud_data[14+j]);
-    }
 
     if( player_score > high_score )
     {
@@ -983,6 +999,36 @@ void enter_end(void)
             fade_to_white();
             DISPLAY_OFF;
             game_state = GS_TITLE;
+        }
+
+        if(text_index < sizeof(end_text))
+        {
+            if(--text_delay == 0)
+            {
+                // Print single character from end text every Nth frame
+                char c = end_text[text_index++];
+                if(c >= 0x00 && c < 0x20)
+                {
+                    text_x = c;
+                    text_y = end_text[text_index++];
+                    c = end_text[text_index++];
+                }
+                if(c >= 'A' && c <= 'Z')
+                {
+                    set_tile_xy(VIEWPORT_X_OFS + text_x, VIEWPORT_Y_OFS + text_y, c + (FONT_TILE_INDEX_A - 'A'));
+                }
+                text_x++;
+                text_delay = 15;
+            }
+        }
+        else if(score_index >= -2 && --score_delay == 0)
+        {
+            char c;
+            j = (player_score >> (score_index<<2)) & 0x0F;
+            c = (score_index >= 0) ? hud_data[14+j] : FONT_TILE_INDEX_0;
+            set_tile_xy(VIEWPORT_X_OFS + 10-score_index, 14 + VIEWPORT_Y_OFS, c);
+            score_index--;
+            score_delay = 30;
         }
 
         play_music();
