@@ -23,6 +23,8 @@ UBYTE shake;
 
 // Rolling buffer storing 32 columns of the level
 UBYTE buf[512];
+UBYTE preload_tile_pos;
+UBYTE preload_pending;
 
 //level
 const unsigned char *level_data;
@@ -473,12 +475,13 @@ void init_level(void)
     set_music(current_stage->music);
 
     //background
-    for( i = 0; i != VIEWPORT_WIDTH+1 + BUF_PRELOAD_WIDTH; i++ )
+    for( i = 0; i != VIEWPORT_WIDTH+1 + BUF_PRELOAD_WIDTH + 1; i++ )
     {
         SET_BANK(g_current_map_bank);
         copy_map_column_to_buf(i, VIEWPORT_HEIGHT-2);
         RESTORE_BANK();
     }
+    preload_pending = 0;
     w = 0;
     for( i = 0; i != VIEWPORT_WIDTH+1; i++ )
     {
@@ -546,6 +549,8 @@ void update_level(void)
 
     SET_BANK(BANK(monster_data));
     //update level
+
+    // Handle scroll (sets pending flag)
     if( scroll != 0 )
     {
         scroll_pos += scroll;
@@ -554,11 +559,10 @@ void update_level(void)
         {
             tile_cnt -= 8;
             tile_pos++;
+            preload_tile_pos = tile_pos+1;
+            preload_pending = 1; // schedule map preload column code
             if( tile_pos < 236 )
             {
-                SET_BANK(g_current_map_bank);
-                copy_map_column_to_buf(tile_pos + VIEWPORT_WIDTH + BUF_PRELOAD_WIDTH, VIEWPORT_HEIGHT-2);
-                RESTORE_BANK();
                 update_screen_column_from_buf(tile_pos + VIEWPORT_WIDTH);
             }
 #if defined(MASTERSYSTEM) || defined(NINTENDO_NES)
@@ -623,7 +627,14 @@ void update_level(void)
                 }
             }
         }
-    }
+        else if(preload_pending) // on frames where no other updates happen, preload one metatile column
+        {
+            SET_BANK(g_current_map_bank);
+            copy_map_column_to_buf(preload_tile_pos + VIEWPORT_WIDTH + BUF_PRELOAD_WIDTH, VIEWPORT_HEIGHT-2);
+            RESTORE_BANK();
+            preload_pending = 0;
+        }
+    }    
 }
 
 void draw_level(void)
