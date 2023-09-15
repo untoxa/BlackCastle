@@ -258,9 +258,13 @@ void init_title(void)
     level_maj = 1;
     level_min = 1;
 
-    //background
+    // font
+    SET_BANK(BANK(hud_tiles));
+    SET_BKG_CHR(0x8C,51, hud_tiles);
+
+    //background tiles (overwrites first black/unused tile of hud tiles)
     SET_BANK(BANK(title_tiles));
-    set_bkg_data(0,177, title_tiles);
+    SET_BKG_CHR(0,0x8D, title_tiles);
     w = 0;
     for( i = 0; i != 20; i++ )
     {
@@ -385,19 +389,19 @@ void init_level(void)
     set_2bpp_palette(COMPAT_PALETTE(0,1,4,3));
 #endif
     // Player/player shots/monsters which can flip
-    set_sprite_data(0, ST_NUM_FLIP, current_level->sprites);
+    SET_SPRITE_CHR(0, (level_min == 4) ? ST_LAST : ST_NUM_FLIP, current_level->sprites);
 #ifdef SEGA
     // Mirror sprite tiles in SW in second half of tile table, as we lack sprite flipping in HW
     set_sprite_data_flipx(ST_NUM_FLIP, ST_NUM_FLIP, current_level->sprites);
 #endif
     // These sprite tiles don't need mirroring
     // Leave gap of 2 8x16 tiles to avoid boss tiles overwriting them
-    set_sprite_data(2*ST_NUM_FLIP + 4, ST_NUM_NOFLIP, current_level->sprites_noflip);
+    SET_SPRITE_CHR(2*ST_NUM_FLIP + 4, ST_NUM_NOFLIP, current_level->sprites_noflip);
 
     if(level_min == 4)
     {
         // Boss sprite tiles (no flipping needed - overwrite monster tiles)
-        set_sprite_data(ST_BOSS_BAT0 & 0xFE, ST_NUM_BOSS, current_level->sprites_bosses);
+        SET_SPRITE_CHR(ST_BOSS_BAT0 & 0xFE, ST_NUM_BOSS, current_level->sprites_bosses);
     }
 
 #if defined(CLIP_SPRITES_X) || defined(CLIP_SPRITES_Y)
@@ -437,7 +441,7 @@ void init_level(void)
 #ifdef SEGA
     set_2bpp_palette(COMPAT_PALETTE(0,1,2,3));
 #endif
-    set_bkg_data(32,51, current_level->hud_tiles);
+    SET_BKG_CHR(32,51, current_level->hud_tiles);
     w = 0;
     for( i = 0; i != 20; i++ )
     {
@@ -455,7 +459,7 @@ void init_level(void)
 
     // level tiles
     SET_BANK(current_level->bank_tiles);
-    set_bkg_data(0, 32, current_level->tiles);
+    SET_BKG_CHR(0, 32, current_level->tiles);
 
     // level stage maps, data and settings
     SET_BANK(current_stage->bank_map);

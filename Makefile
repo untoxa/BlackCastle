@@ -25,12 +25,11 @@ LCCFLAGS += $(LCCFLAGS_$(EXT)) # This adds the current platform specific LCC Fla
 LCCFLAGS += -Wl-j -Wm-yoA -autobank -Wb-ext=.rel # MBC + Autobanking related flags
 LCCFLAGS += -Wl-j -Wl-w -Wm-yS
 LCCFLAGS += -debug      # Uncomment to enable debug output
-LCCFLAGS += -v -Wb-v    # Uncomment for lcc verbose output
-LCCFLAGS += -Wl-u
+LCCFLAGS += -v -Wb-v    # Uncomment for lcc verbose output#
+LCCFLAGS += -Wa-l -Wl-u
 
 CFLAGS = -Wf-Iinclude -Wf-MMD
 CFLAGS += -debug
-
 
 # You can set the name of the ROM file here
 PROJECTNAME = blackcastle
@@ -70,11 +69,11 @@ $(OBJDIR)/%.o:	$(RESDIR)/%.c
 
 # Compile .s assembly files in "src/<target>/" to .o object files
 $(OBJDIR)/%.o:	$(SRCPLAT)/%.s
-	$(LCC) $(CFLAGS) -c -o $@ $<
+	$(LCC) $(LCCFLAGS) $(CFLAGS) -c -o $@ $<
 
 # Compile .s assembly files in "src/" to .o object files
 $(OBJDIR)/%.o:	$(SRCDIR)/%.s
-	$(LCC) $(CFLAGS) -c -o $@ $<
+	$(LCC) $(LCCFLAGS) $(CFLAGS) -c -o $@ $<
 
 # If needed, compile .c files i n"src/" to .s assembly files
 # (not required if .c is compiled directly to .o)

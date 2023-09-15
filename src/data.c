@@ -5,14 +5,14 @@
 
 #include <gbdk/incbin.h>
 
-INCBIN(sprite_tiles, "res/sprite_tiles_flip.chr")
+INCBIN_CHR(sprite_tiles, res/sprite_tiles_flip)
 INCBIN_EXTERN(sprite_tiles)
-INCBIN(sprite_tiles_noflip, "res/sprite_tiles_noflip.chr")
+INCBIN_CHR(sprite_tiles_noflip, res/sprite_tiles_noflip)
 INCBIN_EXTERN(sprite_tiles_noflip)
-INCBIN(sprite_tiles_bosses, "res/sprite_tiles_bosses.chr")
+INCBIN_CHR(sprite_tiles_bosses, res/sprite_tiles_bosses)
 INCBIN_EXTERN(sprite_tiles_bosses)
 
-INCBIN(hud_tiles, "res/hud_tiles.chr")
+INCBIN_CHR(hud_tiles, res/hud_tiles)
 INCBIN_EXTERN(hud_tiles)
 
 BANKREF(hud_map)

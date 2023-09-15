@@ -5,7 +5,7 @@
 
 #include <gbdk/incbin.h>
 
-INCBIN(title_tiles, "res/title_bg.chr")
+INCBIN_CHR(title_tiles, res/title_bg_nofont)
 INCBIN_EXTERN(title_tiles)
 
 INCBIN(title_map, "res/title_map.bin")
