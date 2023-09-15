@@ -30,17 +30,10 @@ extern UBYTE boss_lif;
 extern UBYTE boss_cnt;
 extern UBYTE boss_state;
 
-void new_boss(UBYTE x, UBYTE y, UBYTE type) NONBANKED;
-void update_boss(void) NONBANKED;
-void update_boss_bat(void);
-void update_boss_minotaur(void);
-void update_boss_reaper(void);
-
-extern const uint8_t boss_bat_dummyvar;
-BANKREF_EXTERN(boss_bat_dummyvar)
-extern const uint8_t boss_minotaur_dummyvar;
-BANKREF_EXTERN(boss_minotaur_dummyvar)
-extern const uint8_t boss_reaper_dummyvar;
-BANKREF_EXTERN(boss_reaper_dummyvar)
+void new_boss(UBYTE x, UBYTE y, UBYTE type) BANKED;
+void update_boss(void) BANKED;
+void update_boss_bat(void) BANKED;
+void update_boss_minotaur(void) BANKED;
+void update_boss_reaper(void) BANKED;
 
 #endif

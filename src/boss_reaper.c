@@ -5,10 +5,7 @@
 #include "global.h"
 #include "boss.h"
 
-BANKREF(boss_reaper_dummyvar)
-const uint8_t boss_reaper_dummyvar = 1;
-
-void update_boss_reaper(void)
+void update_boss_reaper(void) BANKED
 {
     UBYTE i,dmg;
     

@@ -25,7 +25,7 @@ UBYTE boss_lif;
 UBYTE boss_cnt;
 UBYTE boss_state;
 
-void new_boss(UBYTE x, UBYTE y, UBYTE type) NONBANKED
+void new_boss(UBYTE x, UBYTE y, UBYTE type) BANKED
 {
     if( boss_act == FALSE )
     {
@@ -84,7 +84,7 @@ void new_boss(UBYTE x, UBYTE y, UBYTE type) NONBANKED
     }   
 }
 
-void update_boss(void) NONBANKED
+void update_boss(void) BANKED
 {
     BYTE x,y;
     
@@ -102,19 +102,15 @@ void update_boss(void) NONBANKED
                 switch( boss_typ )
                 {
                     case BT_BAT:
-                        SET_BANK(BANK(boss_bat_dummyvar));
                         update_boss_bat();
                         break;
                     case BT_MINOTAUR:
-                        SET_BANK(BANK(boss_minotaur_dummyvar));
                         update_boss_minotaur();
                         break;
                     case BT_REAPER:
-                        SET_BANK(BANK(boss_reaper_dummyvar));
                         update_boss_reaper();
                         break;
                 }
-                RESTORE_BANK();
                 break;
             case BS_END:
                 if( boss_dmg == 0 )

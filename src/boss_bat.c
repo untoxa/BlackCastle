@@ -5,10 +5,7 @@
 #include "global.h"
 #include "boss.h"
 
-BANKREF(boss_bat_dummyvar)
-const uint8_t boss_bat_dummyvar = 1;
-
-void update_boss_bat(void)
+void update_boss_bat(void) BANKED
 {
     UBYTE i,dmg;
     

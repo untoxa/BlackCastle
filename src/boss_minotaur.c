@@ -5,10 +5,7 @@
 #include "global.h"
 #include "boss.h"
 
-BANKREF(boss_minotaur_dummyvar)
-const uint8_t boss_minotaur_dummyvar = 1;
-
-void update_boss_minotaur(void)
+void update_boss_minotaur(void) BANKED
 {
     UBYTE tile_x, tile_y, tile;
     UWORD pos;
