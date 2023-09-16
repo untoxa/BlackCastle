@@ -24,12 +24,11 @@ LCCFLAGS += $(LCCFLAGS_$(EXT)) # This adds the current platform specific LCC Fla
 
 LCCFLAGS += -Wl-j -Wm-yoA -autobank -Wb-ext=.rel # MBC + Autobanking related flags
 LCCFLAGS += -Wl-j -Wl-w -Wm-yS
-LCCFLAGS += -debug      # Uncomment to enable debug output
+# LCCFLAGS += -debug      # Uncomment to enable debug output
 LCCFLAGS += -v -Wb-v    # Uncomment for lcc verbose output#
 LCCFLAGS += -Wa-l -Wl-u
 
 CFLAGS = -Wf-Iinclude -Wf-MMD
-CFLAGS += -debug
 
 # You can set the name of the ROM file here
 PROJECTNAME = blackcastle
