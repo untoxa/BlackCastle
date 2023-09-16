@@ -31,7 +31,7 @@ extern UBYTE boss_cnt;
 extern UBYTE boss_state;
 
 void new_boss(UBYTE x, UBYTE y, UBYTE type) BANKED;
-void update_boss(void) BANKED;
+void update_boss(void) NONBANKED;
 void update_boss_bat(void) BANKED;
 void update_boss_minotaur(void) BANKED;
 void update_boss_reaper(void) BANKED;

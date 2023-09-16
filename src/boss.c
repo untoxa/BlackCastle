@@ -31,7 +31,7 @@ void new_boss(UBYTE x, UBYTE y, UBYTE type) BANKED
     {
         boss_act = TRUE;
         boss_x = x;
-        boss_y = y; 
+        boss_y = y;
         switch( type )
         {
             case BT_BAT:
@@ -81,90 +81,87 @@ void new_boss(UBYTE x, UBYTE y, UBYTE type) BANKED
         boss_ani = 0;
         boss_dmg = 128;
         boss_state = BS_START;
-    }   
+    }
 }
 
-void update_boss(void) BANKED
+void update_boss(void) NONBANKED
 {
     BYTE x,y;
-    
-    if( boss_act == TRUE )
+
+    switch( boss_state )
     {
-        switch( boss_state )
-        {
-            case BS_START:
-                if( boss_dmg == 1 )
-                {
-                    boss_state = BS_FIGHT;
-                }
-                break;
-            case BS_FIGHT:
+        case BS_START:
+            if( boss_dmg == 1 )
+            {
+                boss_state = BS_FIGHT;
+            }
+            break;
+        case BS_FIGHT:
+            switch( boss_typ )
+            {
+                case BT_BAT:
+                    update_boss_bat();
+                    break;
+                case BT_MINOTAUR:
+                    update_boss_minotaur();
+                    break;
+                case BT_REAPER:
+                    update_boss_reaper();
+                    break;
+            }
+            break;
+        case BS_END:
+            if( boss_dmg == 0 )
+            {
+                boss_act = FALSE;
                 switch( boss_typ )
                 {
                     case BT_BAT:
-                        update_boss_bat();
+                        clear_sprite(boss_spr0);
+                        clear_sprite(boss_spr1);
+                        clear_sprite(boss_spr2);
                         break;
                     case BT_MINOTAUR:
-                        update_boss_minotaur();
+                        clear_sprite(boss_spr0);
+                        clear_sprite(boss_spr1);
+                        clear_sprite(boss_spr2);
+                        clear_sprite(boss_spr3);
+                        clear_sprite(boss_spr4);
+                        clear_sprite(boss_spr5);
                         break;
                     case BT_REAPER:
-                        update_boss_reaper();
+                        clear_sprite(boss_spr0);
+                        clear_sprite(boss_spr1);
+                        clear_sprite(boss_spr2);
+                        clear_sprite(boss_spr3);
                         break;
                 }
-                break;
-            case BS_END:
-                if( boss_dmg == 0 )
+
+                add_score(0x20);
+            } else {
+                if( (boss_dmg & 15) == 0 )
                 {
-                    boss_act = FALSE;
-                    switch( boss_typ )
+                    x = rand() & 3;
+                    if( x == 3 )
                     {
-                        case BT_BAT:
-                            clear_sprite(boss_spr0);
-                            clear_sprite(boss_spr1);
-                            clear_sprite(boss_spr2);
-                            break;
-                        case BT_MINOTAUR:
-                            clear_sprite(boss_spr0);
-                            clear_sprite(boss_spr1);
-                            clear_sprite(boss_spr2);
-                            clear_sprite(boss_spr3);
-                            clear_sprite(boss_spr4);
-                            clear_sprite(boss_spr5);
-                            break;
-                        case BT_REAPER:
-                            clear_sprite(boss_spr0);
-                            clear_sprite(boss_spr1);
-                            clear_sprite(boss_spr2);
-                            clear_sprite(boss_spr3);
-                            break;
+                        x = 1;
                     }
-                    
-                    add_score(0x20);                
-                } else {
-                    if( (boss_dmg & 15) == 0 )
+                    x = (x << 3) - 4;
+                    y = rand() & 3;
+                    if( y == 3 )
                     {
-                        x = rand() & 3;
-                        if( x == 3 )
-                        {
-                            x = 1;
-                        }
-                        x = (x << 3) - 4;
-                        y = rand() & 3;
-                        if( y == 3 ) 
-                        {
-                            y = 1;
-                        }
-                        y = (y << 2) - 4;
-                        new_explosion( boss_x + x, boss_y + y);
+                        y = 1;
                     }
+                    y = (y << 2) - 4;
+                    new_explosion( boss_x + x, boss_y + y);
                 }
-                break;
-        }
-        
-        boss_ani++;
-        if( boss_dmg != 0 )
-        {
-            boss_dmg--;
-        }
+            }
+            break;
+    }
+
+    boss_ani++;
+    if( boss_dmg != 0 )
+    {
+        boss_dmg--;
     }
 }

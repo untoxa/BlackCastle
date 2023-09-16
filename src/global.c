@@ -528,7 +528,7 @@ void update_level(void)
 
     update_monster();
 
-    update_boss();
+    if (boss_act) update_boss();
 
     update_monster_shot();
 
@@ -634,7 +634,7 @@ void update_level(void)
             RESTORE_BANK();
             preload_pending = 0;
         }
-    }    
+    }
 }
 
 void draw_level(void)
