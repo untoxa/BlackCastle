@@ -5,7 +5,7 @@
 
 #include <gbdk/incbin.h>
 
-INCBIN(level3_tiles, "res/level3_tiles.chr")
+INCBIN_CHR(level3_tiles, res/level3_tiles)
 INCBIN_EXTERN(level3_tiles)
 
 INCBIN(level3_1_map, "res/level_3_1_map_meta.bin")

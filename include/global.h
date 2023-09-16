@@ -330,4 +330,18 @@ inline void set_sprite_flip(uint8_t nb, uint8_t flip)
 void set_sprite_data_flipx(uint8_t first_tile, uint8_t nb_tiles, const uint8_t *data);
 #endif
 
+#define QUOTED_STRING(s) #s
+#if defined(NINTENDO_NES)
+void set_bkg_data_tokumaru(uint8_t first_tile, uint8_t nb_tiles, const uint8_t *data);
+void set_sprite_data_tokumaru(uint8_t first_tile, uint8_t nb_tiles, const uint8_t *data);
+#define SET_BKG_CHR(FIRST_TILE, NB_TILES, DATA) set_bkg_data_tokumaru(FIRST_TILE, NB_TILES, DATA)
+#define SET_SPRITE_CHR(FIRST_TILE, NB_TILES, DATA) set_sprite_data_tokumaru(FIRST_TILE, NB_TILES, DATA)
+#define INCBIN_CHR(name, filename) INCBIN(name, QUOTED_STRING(filename.tkc))
+#else
+#define SET_BKG_CHR(FIRST_TILE, NB_TILES, DATA) set_bkg_data(FIRST_TILE, NB_TILES, DATA)
+#define SET_SPRITE_CHR(FIRST_TILE, NB_TILES, DATA) set_sprite_data(FIRST_TILE, NB_TILES, DATA)
+#define INCBIN_CHR(name, filename) INCBIN(name, QUOTED_STRING(filename.chr))
+#endif
+
+
 #endif
