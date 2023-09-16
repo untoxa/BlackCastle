@@ -877,6 +877,9 @@ void enter_level(void)
             player_vel = -20;
             while( player_y < 144 )
             {
+#ifdef SEGA
+                player_dir = 1;
+#endif
                 if( player_dir == 1 )
                 {
                     set_sprite_tile(player_spr0,ST_PLAYER_DROP0);
