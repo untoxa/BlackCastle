@@ -1,0 +1,96 @@
+name: Build and Package ROM
+
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+  # Triggers the workflow on push or pull request events but only for the develop branch
+  # push:
+  #   branches: [ develop ]
+  # pull_request:
+  #   branches: [ develop ]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}  
+    strategy:
+      matrix:       
+        include:
+          - os: ubuntu-20.04
+            name: Linux-x64
+    steps:
+
+      # ==== OS Specific Dependencies ====
+      - name: Linux Depends
+        if: matrix.name == 'Linux-x64'
+        run: |
+          # Pull in GBDK-2020 4.2.0
+          curl -Lo gbdk-linux64.tar.gz https://github.com/gbdk-2020/gbdk-2020/releases/download/4.2.0/gbdk-linux64.tar.gz
+          tar xvfz gbdk-linux64.tar.gz
+          python -m pip install --upgrade Pillow
+          python -m pip install --upgrade wave
+
+      # ==== Build Steps ====
+      - name: Check out Source
+        uses: actions/checkout@v2
+        with:
+          path: blackcastle
+          submodules: false
+
+      # ==== Pre-Build: Set environment vars ====
+      # Needs to be in a separate step than build so that setting the environment var takes effect
+      #
+      - name: Pre-Build Linux
+        if: (matrix.name == 'Linux-x64')
+        shell: bash
+        run: |
+          echo "BUILD_PACKAGE_FILENAME=blackcastle.zip" >> $GITHUB_ENV
+
+
+      # ==== Build ====
+      - name: Build GBDK-2020 Linux
+        if: (matrix.name == 'Linux-x64')
+        shell: bash
+        run: |
+          export GBDK_HOME=`pwd`/gbdk/
+          cd blackcastle
+          make
+          cd ..
+
+
+      # ==== Packaging ====
+      - name: Package build Linux/MacOS
+        if: (matrix.name == 'Linux-x64')
+        shell: bash
+        run: |
+          ls -la blackcastle/build
+          ls -la blackcastle/build/duck 
+          ls -la blackcastle/build/gb 
+          ls -la blackcastle/build/gg 
+          ls -la blackcastle/build/nes 
+          ls -la blackcastle/build/pocket 
+          ls -la blackcastle/build/sms
+          # Remove debug artifacts
+          rm -f blackcastle/build/duck/*.noi blackcastle/build/duck/*.map blackcastle/build/duck/*.sym blackcastle/build/duck/*.ihx
+          rm -f blackcastle/build/gb/*.noi blackcastle/build/gb/*.map blackcastle/build/gb/*.sym blackcastle/build/gb/*.ihx
+          rm -f blackcastle/build/gg/*.noi blackcastle/build/gg/*.map blackcastle/build/gg/*.sym blackcastle/build/gg/*.ihx
+          rm -f blackcastle/build/nes/*.noi blackcastle/build/nes/*.map blackcastle/build/nes/*.sym blackcastle/build/nes/*.ihx
+          rm -f blackcastle/build/pocket/*.noi blackcastle/build/pocket/*.map blackcastle/build/pocket/*.sym blackcastle/build/pocket/*.ihx
+          rm -f blackcastle/build/sms/*.noi blackcastle/build/sms/*.map blackcastle/build/sms/*.sym blackcastle/build/sms/*.ihx
+          ls -la blackcastle/build
+          ls -la blackcastle/build/duck 
+          ls -la blackcastle/build/gb 
+          ls -la blackcastle/build/gg 
+          ls -la blackcastle/build/nes 
+          ls -la blackcastle/build/pocket 
+          ls -la blackcastle/build/sms
+          # Don't use zip in linux since github will created a double nested zip
+          # 7z a ${{ env.BUILD_PACKAGE_FILENAME }} *.gb
+
+      - name: Store build
+        if: (matrix.name == 'Linux-x64')
+        uses: actions/upload-artifact@v2
+        with:
+          name: Black Castle ROM Build
+          # path: blackcastle/build/gb/${{ env.BUILD_PACKAGE_FILENAME }}
+          path: blackcastle/build
+          # retention-days: 14
