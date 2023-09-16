@@ -208,6 +208,13 @@ extern UBYTE tile_cnt;
 extern UBYTE tile_pos;
 extern UBYTE shake;
 
+//items
+extern UBYTE platform_count;
+extern UBYTE monster_shot_count;
+extern UBYTE stone_count;
+extern UBYTE item_count;
+extern UBYTE explosion_count;
+
 // Rolling buffer of 32 columns of level data
 extern UBYTE buf[512];
 #define BUFPOS(X, Y) (((X & 0x1F) << 4) + Y)

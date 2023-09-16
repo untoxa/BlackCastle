@@ -8,6 +8,7 @@
 UBYTE spr_act[MAX_SPRITES];
 
 //item
+UBYTE item_count;
 UBYTE item_act[MAX_ITEM];
 UBYTE item_x[MAX_ITEM];
 UBYTE item_y[MAX_ITEM];
@@ -16,6 +17,7 @@ UBYTE item_typ[MAX_ITEM];
 BYTE item_vel[MAX_ITEM];
 
 //platform
+UBYTE platform_count;
 UBYTE platform_act[MAX_PLATFORM];
 UBYTE platform_x[MAX_PLATFORM];
 UBYTE platform_y[MAX_PLATFORM];
@@ -27,6 +29,7 @@ UBYTE platform_pos[MAX_PLATFORM];
 BYTE platform_vel[MAX_PLATFORM];
 
 //explosion
+UBYTE explosion_count;
 UBYTE explosion_act[MAX_EXPLOSION];
 UBYTE explosion_x[MAX_EXPLOSION];
 UBYTE explosion_y[MAX_EXPLOSION];
@@ -35,6 +38,7 @@ UBYTE explosion_spr1[MAX_EXPLOSION];
 UBYTE explosion_ani[MAX_EXPLOSION];
 
 //stone
+UBYTE stone_count;
 UBYTE stone_act[MAX_STONE];
 UBYTE stone_x[MAX_STONE];
 UBYTE stone_y[MAX_STONE];
@@ -93,30 +97,35 @@ void clear_all_objects(void) NONBANKED
     }
 
     //monster shot
+    monster_shot_count = 0;
     for( i = 0; i != MAX_MONSTER_SHOT; i++ )
     {
         monster_shot_act[i] = FALSE;
     }
 
     //item
+    item_count = 0;
     for( i = 0; i != MAX_ITEM; i++ )
     {
         item_act[i] = FALSE;
     }
 
     //platfrom
+    platform_count = 0;
     for( i = 0; i != MAX_PLATFORM; i++ )
     {
         platform_act[i] = FALSE;
     }
 
     //explosion
+    explosion_count = 0;
     for( i = 0; i != MAX_EXPLOSION; i++ )
     {
         explosion_act[i] = FALSE;
     }
 
     //stone
+    stone_count = 0;
     for( i = 0; i != MAX_STONE; i++ )
     {
         stone_act[i] = FALSE;
@@ -134,6 +143,7 @@ void new_item(UBYTE x, UBYTE y, UBYTE type) BANKED
     {
         if( item_act[i] == FALSE )
         {
+            item_count++;
             item_act[i] = TRUE;
             item_spr[i] = get_sprite();
             switch( type )
@@ -219,14 +229,16 @@ void update_item(void) BANKED
                             break;
 
                     }
-                    item_act[i] = 0;
+                    item_count--;
+                    item_act[i] = FALSE;
                     clear_sprite( item_spr[i] );
                 }
             }
 
             if( item_x[i] == 240 )
             {
-                item_act[i] = 0;
+                item_count--;
+                item_act[i] = FALSE;
                 clear_sprite( item_spr[i] );
             }
         }
@@ -241,6 +253,7 @@ void new_platform(UBYTE x, UBYTE y, UBYTE type) BANKED
     {
         if( platform_act[i] == FALSE )
         {
+            platform_count++;
             platform_act[i] = TRUE;
             platform_spr0[i] = get_sprite();
             platform_spr1[i] = get_sprite();
@@ -375,7 +388,8 @@ void update_platform(void) BANKED
 
             if( ((platform_x[i] > ENEMY_SPAWN_POS_X) && (platform_x[i] < 216))|| (platform_y[i] >= 176) )
             {
-                platform_act[i] = 0;
+                platform_count--;
+                platform_act[i] = FALSE;
                 clear_sprite( platform_spr0[i] );
                 clear_sprite( platform_spr1[i] );
             }
@@ -406,6 +420,7 @@ void new_explosion(UBYTE x, UBYTE y) BANKED
     {
         if( explosion_act[i] == FALSE )
         {
+            explosion_count++;
             explosion_act[i] = TRUE;
             explosion_x[i] = x;
             explosion_y[i] = y;
@@ -443,6 +458,7 @@ void update_explosion(void) BANKED
             }
             if( explosion_ani[i] == 15 )
             {
+                explosion_count--;
                 explosion_act[i] = FALSE;
                 clear_sprite(explosion_spr0[i]);
                 clear_sprite(explosion_spr1[i]);
@@ -469,6 +485,7 @@ void new_stone(UBYTE x, UBYTE y, BYTE dir) BANKED
         {
             clear_sprite(stone_spr[i]);
         }
+        stone_count++;
         stone_act[i] = TRUE;
         stone_x[i] = x;
         stone_y[i] = y;
@@ -499,6 +516,7 @@ void update_stone(void) BANKED
 
             if( stone_y[i] > 160 )
             {
+                stone_count--;
                 stone_act[i] = FALSE;
                 clear_sprite(stone_spr[i]);
             }

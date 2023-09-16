@@ -520,21 +520,21 @@ void update_level(void)
 
     update_player();
 
-    update_platform();
+    if (platform_count) update_platform();
 
     update_player_shot();
 
-    update_item();
+    if (item_count) update_item();
 
     update_monster();
 
     if (boss_act) update_boss();
 
-    update_monster_shot();
+    if (monster_shot_count) update_monster_shot();
 
-    update_explosion();
+    if (explosion_count) update_explosion();
 
-    update_stone();
+    if (stone_count) update_stone();
 
 #ifndef GAMEGEAR
     switch (++level_ani & 7) {
@@ -974,7 +974,7 @@ void enter_end(void)
 
     SET_BANK(BANK(end_map));
 
-    g_current_map = end_map;
+    g_current_map = (UBYTE*)end_map;
 
     clear_all();
     fill_bkg_rect(DEVICE_SCREEN_X_OFFSET, DEVICE_SCREEN_Y_OFFSET, DEVICE_SCREEN_WIDTH, DEVICE_SCREEN_HEIGHT, 0);
