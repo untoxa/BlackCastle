@@ -879,7 +879,9 @@ void enter_level(void)
             {
 #ifdef SEGA
                 player_dir = 1;
-#endif
+                set_sprite_tile(player_spr0,ST_PLAYER_DROP0);
+                set_sprite_tile(player_spr1,ST_PLAYER_DROP1);
+#else
                 if( player_dir == 1 )
                 {
                     set_sprite_tile(player_spr0,ST_PLAYER_DROP0);
@@ -888,7 +890,7 @@ void enter_level(void)
                     set_sprite_tile(player_spr0,ST_PLAYER_DROP1);
                     set_sprite_tile(player_spr1,ST_PLAYER_DROP0);
                 }
-
+#endif
                 if( player_vel != 25 )
                 {
                     player_vel++;

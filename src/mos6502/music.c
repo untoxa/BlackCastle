@@ -17,7 +17,7 @@ inline UBYTE translete_env(UBYTE env) {
 
 extern const UWORD frequency[];
 
-UBYTE music_play;
+UBYTE music_play = FALSE;
 
 const unsigned char *music_data_ch1;
 const unsigned char *music_ptr_ch1;

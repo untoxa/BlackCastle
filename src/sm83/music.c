@@ -15,7 +15,7 @@ const unsigned char inst_ch3[] = {0x34,0x45,0x56,0x67,0x89,0x9A,0xAB,0xBC,0x34,0
 
 volatile unsigned char __at (0xFF30) wave[16];
 
-UBYTE music_play;
+UBYTE music_play = FALSE;
 
 const unsigned char *music_data_ch1;
 const unsigned char *music_ptr_ch1;
