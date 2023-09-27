@@ -28,7 +28,8 @@ LCCFLAGS += -Wl-j -Wl-w -Wm-yS
 LCCFLAGS += -v -Wb-v    # Uncomment for lcc verbose output#
 LCCFLAGS += -Wa-l -Wl-u
 
-CFLAGS = -Wf-Iinclude -Wf-MMD
+CFLAGS   = -Wf-Iinclude -Wf-MMD
+#CFLAGS   += -Wf'--max-allocs-per-node 50000'
 
 # You can set the name of the ROM file here
 PROJECTNAME = blackcastle

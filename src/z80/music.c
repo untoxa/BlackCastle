@@ -5,6 +5,8 @@
 #include "global.h"
 #include "music_data.h"
 
+#define CH2_DISABLE
+
 #define PIANO 0 
 #define BASS 1
 #define SNARE_NOISE_SOLO 2
@@ -289,6 +291,7 @@ void play_music(void) BANKED
             music_inst_cnt_ch2 = 0;
             freq = frequency[*music_ptr_ch2++];
 
+#ifndef CH2_DISABLE
             if( freq == 0 )
             {
                 PSG = PSG_LATCH | PSG_CH1, PSG = 0;
@@ -297,13 +300,15 @@ void play_music(void) BANKED
                 PSG = PSG_LATCH | PSG_CH1 | PSG_VOLUME | instruments_volumes[inst_ch2][music_inst_cnt_ch2];;
                 PSG = PSG_LATCH | PSG_CH1 | ((UBYTE)freq & 0b00001111), PSG = ((UBYTE)(freq >> 4) & 0b00111111);
             }
-
+#endif
             if( *music_ptr_ch2 == 0 )
             {
                 music_ptr_ch2 = music_data_ch2;
             }
         } else {
+#ifndef CH2_DISABLE
                 PSG = PSG_LATCH | PSG_CH1 | PSG_VOLUME | instruments_volumes[inst_ch2][music_inst_cnt_ch2];
+#endif
         }
         music_cnt_ch2--;
         if(music_inst_cnt_ch2 < instruments_releases[inst_ch2]) music_inst_cnt_ch2++;
