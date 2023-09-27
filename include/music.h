@@ -53,7 +53,21 @@ void restart_music(void) BANKED;
 #define NOISE_LOWEST    0xE
 
 #define NOISE_LOOPED    0x80
+#elif defined(SEGA)
+#define WEAPON_SWEEP    0x2
+#define HEART_SWEEP     0x2
 
+#define NOISE_HIGHEST   0x0
+#define NOISE_HIGHER    0x0
+#define NOISE_HIGH      0x0
+#define NOISE_MID_HIGH  0x1
+#define NOISE_MID       0x1
+#define NOISE_MID_LOW   0x1
+#define NOISE_LOW       0x2
+#define NOISE_LOWER     0x2
+#define NOISE_LOWEST    0x2
+
+#define NOISE_LOOPED    0x4
 #else
 #define WEAPON_SWEEP    0x00
 #define HEART_SWEEP     0x00
