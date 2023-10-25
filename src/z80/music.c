@@ -5,6 +5,8 @@
 #include "global.h"
 #include "music_data.h"
 
+//#define CH2_DISABLE
+
 #define SILENT 0
 #define PIANO 1
 #define BASS 2
@@ -12,8 +14,8 @@
 #define KICK_NOISE_SOLO 4
 
 extern const UWORD frequency[];
+extern const UBYTE* instruments_volumes[];
 extern const UBYTE instruments_releases[];
-extern const UBYTE *instruments_volumes[];
 
 UBYTE music_play = FALSE;
 
@@ -100,43 +102,55 @@ void set_music(UBYTE song) BANKED
             music_data_ch1 = game_over_music_lead;
             music_ptr_ch1 = music_data_ch1;
             music_cnt_ch1 = 0;
-            inst_ch1 = 0x40;
+            music_inst_cnt_ch1 = 0;
+            inst_ch1 = PIANO;
             vol_ch1 = 0x01;
 
             music_data_ch2 = game_over_music_lead;
             music_ptr_ch2 = music_data_ch2;
             music_cnt_ch2 = 0;
-            inst_ch2 = 0x80;
+            music_inst_cnt_ch2 = 0;
+            inst_ch2 = PIANO;
             vol_ch2 = 0x04;
 
             music_data_ch3 = game_over_music_bass;
             music_ptr_ch3 = music_data_ch3;
             music_cnt_ch3 = 0;
+            music_inst_cnt_ch3 = 0;
+            inst_ch3 = BASS;
 
             music_data_ch4 = game_over_music_rythm;
             music_ptr_ch4 = music_data_ch4;
             music_cnt_ch4 = 0;
+            music_inst_cnt_ch4 = 0;
+            inst_ch4 = SNARE_NOISE_SOLO;
             break;
         case BOSS_MUSIC:
             music_data_ch1 = boss_music_lead;
             music_ptr_ch1 = music_data_ch1;
             music_cnt_ch1 = 0;
-            inst_ch1 = 0x00;
+            music_inst_cnt_ch1 = 0;
+            inst_ch1 = PIANO;
             vol_ch1 = 0x01;
 
             music_data_ch2 = boss_music_lead;
             music_ptr_ch2 = music_data_ch2;
             music_cnt_ch2 = 0;
-            inst_ch2 = 0xC0;
+            music_inst_cnt_ch2 = 0;
+            inst_ch2 = PIANO;
             vol_ch2 = 0x04;
 
             music_data_ch3 = boss_music_bass;
             music_ptr_ch3 = music_data_ch3;
             music_cnt_ch3 = 0;
+            music_inst_cnt_ch3 = 0;
+            inst_ch3 = BASS;
 
             music_data_ch4 = boss_music_rythm;
             music_ptr_ch4 = music_data_ch4;
             music_cnt_ch4 = 0;
+            music_inst_cnt_ch4 = 0;
+            inst_ch4 = SNARE_NOISE_SOLO;
             break;
         case LEVEL1_MUSIC:
             music_data_ch1 = level1_music_lead;
@@ -171,64 +185,82 @@ void set_music(UBYTE song) BANKED
             music_data_ch1 = level2_music_lead;
             music_ptr_ch1 = music_data_ch1;
             music_cnt_ch1 = 0;
-            inst_ch1 = 0x80;
+            music_inst_cnt_ch1 = 0;
+            inst_ch1 = PIANO;
             vol_ch1 = 0x01;
 
             music_data_ch2 = level2_music_lead;
             music_ptr_ch2 = music_data_ch2;
             music_cnt_ch2 = 0;
-            inst_ch2 = 0x00;
+            music_inst_cnt_ch2 = 0;
+            inst_ch2 = PIANO;
             vol_ch2 = 0x04;
 
             music_data_ch3 = level2_music_bass;
             music_ptr_ch3 = music_data_ch3;
             music_cnt_ch3 = 0;
+            music_inst_cnt_ch3 = 0;
+            inst_ch3 = BASS;
 
             music_data_ch4 = level2_music_rythm;
             music_ptr_ch4 = music_data_ch4;
             music_cnt_ch4 = 0;
+            music_inst_cnt_ch4 = 0;
+            inst_ch4 = SNARE_NOISE_SOLO;
             break;
         case LEVEL3_MUSIC:
             music_data_ch1 = level3_music_lead;
             music_ptr_ch1 = music_data_ch1;
             music_cnt_ch1 = 0;
-            inst_ch1 = 0x80;
+            music_inst_cnt_ch1 = 0;
+            inst_ch1 = PIANO;
             vol_ch1 = 0x01;
 
             music_data_ch2 = level3_music_lead;
             music_ptr_ch2 = music_data_ch2;
             music_cnt_ch2 = 0;
-            inst_ch2 = 0x40;
+            music_inst_cnt_ch2 = 0;
+            inst_ch2 = PIANO;
             vol_ch2 = 0x04;
 
             music_data_ch3 = level3_music_bass;
             music_ptr_ch3 = music_data_ch3;
             music_cnt_ch3 = 0;
+            music_inst_cnt_ch3 = 0;
+            inst_ch3 = BASS;
 
             music_data_ch4 = level3_music_rythm;
             music_ptr_ch4 = music_data_ch4;
             music_cnt_ch4 = 0;
+            music_inst_cnt_ch4 = 0;
+            inst_ch4 = SNARE_NOISE_SOLO;
             break;
         case END_MUSIC:
             music_data_ch1 = end_music_lead;
             music_ptr_ch1 = music_data_ch1;
             music_cnt_ch1 = 0;
-            inst_ch1 = 0x80;
+            music_inst_cnt_ch1 = 0;
+            inst_ch1 = PIANO;
             vol_ch1 = 0x01;
 
             music_data_ch2 = end_music_lead;
             music_ptr_ch2 = music_data_ch2;
             music_cnt_ch2 = 0;
-            inst_ch2 = 0xC0;
+            music_inst_cnt_ch2 = 0;
+            inst_ch2 = PIANO;
             vol_ch2 = 0x04;
 
             music_data_ch3 = end_music_bass;
             music_ptr_ch3 = music_data_ch3;
             music_cnt_ch3 = 0;
+            music_inst_cnt_ch3 = 0;
+            inst_ch3 = BASS;
 
             music_data_ch4 = end_music_rythm;
             music_ptr_ch4 = music_data_ch4;
             music_cnt_ch4 = 0;
+            music_inst_cnt_ch4 = 0;
+            inst_ch4 = SNARE_NOISE_SOLO;
             break;
     }
 }
@@ -244,6 +276,7 @@ void play_music(void) BANKED
         if( music_cnt_ch1 == 0 )
         {
             music_cnt_ch1 = *music_ptr_ch1++;
+            music_inst_cnt_ch1 = 0;
             freq = frequency[*music_ptr_ch1++];
 
             if( sound_cnt_ch1 == 0 )
@@ -270,17 +303,22 @@ void play_music(void) BANKED
                 instruments_index_ch1 = 0;
             }
         } else {
+                PSG = PSG_LATCH | PSG_CH0 | PSG_VOLUME | instruments_volumes[inst_ch1][music_inst_cnt_ch1];
                 if(music_inst_cnt_ch1 < instruments_releases[inst_ch1])
                         music_inst_cnt_ch1++;
+                
         }
         music_cnt_ch1--;
+        if(music_inst_cnt_ch1 < instruments_releases[inst_ch1]) music_inst_cnt_ch1++;
 
         //channel2
         if( music_cnt_ch2 == 0 )
         {
             music_cnt_ch2 = *music_ptr_ch2++;
+            music_inst_cnt_ch2 = 0;
             freq = frequency[*music_ptr_ch2++];
 
+#ifndef CH2_DISABLE
             if( freq == 0 )
             {
                 PSG = PSG_LATCH | PSG_CH1, PSG = 0;
@@ -295,22 +333,25 @@ void play_music(void) BANKED
                 PSG = PSG_LATCH | PSG_CH1 | PSG_VOLUME | instruments_volumes[inst_ch2][music_inst_cnt_ch2];
                 PSG = PSG_LATCH | PSG_CH1 | ((UBYTE)freq & 0b00001111), PSG = ((UBYTE)(freq >> 4) & 0b00111111);
             }
-
+#endif
             if( *music_ptr_ch2 == 0 )
             {
                 music_ptr_ch2 = music_data_ch2;
                 instruments_index_ch2 = 0;
             }
         } else {
+                PSG = PSG_LATCH | PSG_CH1 | PSG_VOLUME | instruments_volumes[inst_ch2][music_inst_cnt_ch2];
                 if(music_inst_cnt_ch2 < instruments_releases[inst_ch2])
                         music_inst_cnt_ch2++;
         }
         music_cnt_ch2--;
-
+        if(music_inst_cnt_ch2 < instruments_releases[inst_ch2]) music_inst_cnt_ch2++;
+        
         //channel3
         if( music_cnt_ch3 == 0 )
         {
             music_cnt_ch3 = *music_ptr_ch3++;
+            music_inst_cnt_ch3 = 0;
             freq = frequency[*music_ptr_ch3++];
 
             if( freq == 0 )
@@ -334,10 +375,12 @@ void play_music(void) BANKED
                 instruments_index_ch3 = 0;
             }
         } else {
+                PSG = PSG_LATCH | PSG_CH2 | PSG_VOLUME | instruments_volumes[inst_ch3][music_inst_cnt_ch3];
                 if(music_inst_cnt_ch3 < instruments_releases[inst_ch3])
                         music_inst_cnt_ch3++;
         }
         music_cnt_ch3--;
+        if(music_inst_cnt_ch3 < instruments_releases[inst_ch3]) music_inst_cnt_ch3++;
 
         //channel4
         if( music_cnt_ch4 == 0 )
@@ -364,10 +407,12 @@ void play_music(void) BANKED
                 instruments_index_ch4 = 0;
             }
         } else {
+                PSG = PSG_LATCH | PSG_CH3 | PSG_VOLUME | instruments_volumes[inst_ch4][music_inst_cnt_ch4];
                 if(music_inst_cnt_ch4 < instruments_releases[inst_ch4])
                         music_inst_cnt_ch4++;
         }
         music_cnt_ch4--;
+        if(music_inst_cnt_ch4 < instruments_releases[inst_ch4]) music_inst_cnt_ch4++;
     }
 }
 
