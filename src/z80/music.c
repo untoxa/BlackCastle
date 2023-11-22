@@ -303,10 +303,12 @@ void play_music(void) BANKED
                 instruments_index_ch1 = 0;
             }
         } else {
-                PSG = PSG_LATCH | PSG_CH0 | PSG_VOLUME | instruments_volumes[inst_ch1][music_inst_cnt_ch1];
-                if(music_inst_cnt_ch1 < instruments_releases[inst_ch1])
-                        music_inst_cnt_ch1++;
-                
+                if( sound_cnt_ch1 == 0 )
+                {
+                        PSG = PSG_LATCH | PSG_CH0 | PSG_VOLUME | instruments_volumes[inst_ch1][music_inst_cnt_ch1];
+                        if(music_inst_cnt_ch1 < instruments_releases[inst_ch1])
+                                music_inst_cnt_ch1++;
+                }
         }
         music_cnt_ch1--;
         if(music_inst_cnt_ch1 < instruments_releases[inst_ch1]) music_inst_cnt_ch1++;
@@ -353,20 +355,22 @@ void play_music(void) BANKED
             music_cnt_ch3 = *music_ptr_ch3++;
             music_inst_cnt_ch3 = 0;
             freq = frequency[*music_ptr_ch3++];
-
-            if( freq == 0 )
+            if( sound_cnt_ch4 == 0 )
             {
-                PSG = PSG_LATCH | PSG_CH2, PSG = 0;
-            } else {
-                music_inst_cnt_ch3 = 0;
-                inst_ch3 = instruments_ch3[instruments_index_ch3];
-                if(inst_ch3 == SILENT) {
-                        instruments_index_ch3 = 0;
+                if( freq == 0 )
+                {
+                        PSG = PSG_LATCH | PSG_CH2, PSG = 0;
+                } else {
+                        music_inst_cnt_ch3 = 0;
                         inst_ch3 = instruments_ch3[instruments_index_ch3];
+                        if(inst_ch3 == SILENT) {
+                                instruments_index_ch3 = 0;
+                                inst_ch3 = instruments_ch3[instruments_index_ch3];
+                        }
+                        instruments_index_ch3++;
+                        PSG = PSG_LATCH | PSG_CH2 | PSG_VOLUME | instruments_volumes[inst_ch3][music_inst_cnt_ch3];
+                        PSG = PSG_LATCH | PSG_CH2 | ((UBYTE)freq & 0b00001111), PSG = ((UBYTE)(freq >> 4) & 0b00111111);
                 }
-                instruments_index_ch3++;
-                PSG = PSG_LATCH | PSG_CH2 | PSG_VOLUME | instruments_volumes[inst_ch3][music_inst_cnt_ch3];
-                PSG = PSG_LATCH | PSG_CH2 | ((UBYTE)freq & 0b00001111), PSG = ((UBYTE)(freq >> 4) & 0b00111111);
             }
 
             if( *music_ptr_ch3 == 0 )
@@ -375,9 +379,12 @@ void play_music(void) BANKED
                 instruments_index_ch3 = 0;
             }
         } else {
-                PSG = PSG_LATCH | PSG_CH2 | PSG_VOLUME | instruments_volumes[inst_ch3][music_inst_cnt_ch3];
-                if(music_inst_cnt_ch3 < instruments_releases[inst_ch3])
-                        music_inst_cnt_ch3++;
+                if( sound_cnt_ch4 == 0 )
+                {
+                        PSG = PSG_LATCH | PSG_CH2 | PSG_VOLUME | instruments_volumes[inst_ch3][music_inst_cnt_ch3];
+                        if(music_inst_cnt_ch3 < instruments_releases[inst_ch3])
+                                music_inst_cnt_ch3++;
+                }
         }
         music_cnt_ch3--;
         if(music_inst_cnt_ch3 < instruments_releases[inst_ch3]) music_inst_cnt_ch3++;
@@ -407,9 +414,12 @@ void play_music(void) BANKED
                 instruments_index_ch4 = 0;
             }
         } else {
-                PSG = PSG_LATCH | PSG_CH3 | PSG_VOLUME | instruments_volumes[inst_ch4][music_inst_cnt_ch4];
-                if(music_inst_cnt_ch4 < instruments_releases[inst_ch4])
-                        music_inst_cnt_ch4++;
+                if( sound_cnt_ch4 == 0 )
+                {
+                        PSG = PSG_LATCH | PSG_CH3 | PSG_VOLUME | instruments_volumes[inst_ch4][music_inst_cnt_ch4];
+                        if(music_inst_cnt_ch4 < instruments_releases[inst_ch4])
+                                music_inst_cnt_ch4++;
+                }
         }
         music_cnt_ch4--;
         if(music_inst_cnt_ch4 < instruments_releases[inst_ch4]) music_inst_cnt_ch4++;

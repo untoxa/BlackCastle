@@ -86,13 +86,34 @@ inline void set_ch4_regs(uint8_t nr41, uint8_t nr42, uint8_t tone, uint8_t nr44)
     _SND400E = tone;
     len_ch1 = (nr41 & 0x3F) >> 2;    
 }
+#elif defined(SEGA)
+
+extern const UWORD frequency[];
+
+inline void set_ch1_regs(uint8_t sweep, uint8_t duty_cycle, uint8_t envelope, uint8_t note, uint8_t period)
+{
+    UWORD freq = frequency[note];
+    UBYTE volume = 0;//16 - (envelope >> 4);
+    PSG = PSG_LATCH | PSG_CH0 | PSG_VOLUME | volume;
+    PSG = PSG_LATCH | PSG_CH0 | ((UBYTE)freq & 0b00001111), PSG = ((UBYTE)(freq >> 4) & 0b00111111);
+}
+
+inline void set_ch4_regs(uint8_t timer, uint8_t envelope, uint8_t tone, uint8_t control)
+{
+    UWORD freq = frequency[tone];
+    UBYTE volume = 0;//16 - (envelope >> 4);
+    PSG = PSG_LATCH | PSG_CH2 | PSG_VOLUME | volume;
+    PSG = PSG_LATCH | PSG_CH3 | PSG_VOLUME | volume;
+    PSG = PSG_LATCH | PSG_CH2 | ((UBYTE)freq & 0b00001111), PSG = ((UBYTE)(freq >> 4) & 0b00111111);
+    PSG = PSG_LATCH | PSG_CH3 | ((UBYTE)0b00000111);
+}
 
 #endif
 
 
 void play_sound(void) NONBANKED
 {
-#if defined(NINTENDO) || defined(NINTENDO_NES)
+#if defined(NINTENDO) || defined(NINTENDO_NES) || defined(SEGA)
     SET_BANK(BANK(sfx_data));
     if( sound_cnt_ch4 != 0 )
     {
