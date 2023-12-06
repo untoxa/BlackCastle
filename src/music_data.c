@@ -7,6 +7,13 @@
 
 BANKREF(music_data)
 
+#define SILENT 0
+#define PIANO 1
+#define BASS 2
+#define SNARE_NOISE_SOLO 3
+#define KICK_NOISE_SOLO 4
+
+
 const unsigned char title_music_lead[] =
 {
     18,E5,2,BRK,18,A4,2,BRK,18,E5,2,BRK,18,A4,2,BRK,18,F5,2,BRK,18,A4,2,BRK,18,E5,2,BRK,18,A4,2,BRK,
@@ -15,11 +22,24 @@ const unsigned char title_music_lead[] =
     18,B4,2,BRK,18,E4,2,BRK,18,B4,2,BRK,18,E4,2,BRK,18,C5,2,BRK,18,E4,2,BRK,18,D5,2,BRK,18,E4,2,BRK,
     0
 };
+const unsigned char title_music_lead_instruments[] =
+{
+    PIANO,SILENT
+};
 
 const unsigned char title_music_bass[] =
 {
     158,A3,2,BRK,158,G3,2,BRK,158,F3,2,BRK,158,E3,2,BRK,
     0
+};
+const unsigned char title_music_bass_instruments[] =
+{
+    BASS,SILENT
+};
+
+const unsigned char title_music_tone3_instruments[] =
+{
+    SILENT, SILENT
 };
 
 const unsigned char title_music_rythm[] =
@@ -27,6 +47,11 @@ const unsigned char title_music_rythm[] =
 
     1,NOISE_LOOPED | NOISE_MID,1,NOISE_LOOPED | NOISE_LOWEST,78,0x00,1,NOISE_LOOPED | NOISE_MID,1,NOISE_LOOPED | NOISE_HIGHER,58,0x00,1,NOISE_LOOPED | NOISE_MID,1,NOISE_LOOPED | NOISE_HIGHER,18,0x00,
     0
+};
+
+const unsigned char title_music_rythm_instruments[] =
+{
+    KICK_NOISE_SOLO,SNARE_NOISE_SOLO,SNARE_NOISE_SOLO,KICK_NOISE_SOLO,SNARE_NOISE_SOLO,SNARE_NOISE_SOLO,SILENT
 };
 
 const unsigned char game_over_music_lead[] =
@@ -119,6 +144,11 @@ const unsigned char level1_music_lead[] =
     0
 };
 
+const unsigned char level1_music_lead_instruments[] =
+{
+    PIANO,SILENT
+};
+
 const unsigned char level1_music_bass[] =
 {
     //A
@@ -159,6 +189,12 @@ const unsigned char level1_music_bass[] =
     14,A3,2,BRK,14,A3,2,BRK,16,BRK,14,A3,2,BRK,30,A3,2,BRK,14,A3,2,BRK,14,A3,2,BRK,
     0
 };
+
+const unsigned char level1_music_bass_instruments[] =
+{
+    BASS,SILENT
+};
+
 
 const unsigned char level1_music_rythm[] =
 {

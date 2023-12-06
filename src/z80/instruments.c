@@ -2,15 +2,24 @@
 
 
 const UBYTE instruments_releases[] = {
+        7,
         79,
         5,
-        16
+        16,
+        10
 };
 
 const UBYTE *instruments_volumes[] = {
+        silent_instrument,
         piano_instrument,
         bass_instrument,
-        snare_solo_noise_instrument
+        snare_solo_noise_instrument,
+        kick_solo_noise_instrument,
+        
+};
+
+const UBYTE silent_instrument[8] = {
+        0x0F,0x0F,0x0F,0x0F,0x0F,0x0F,0x0F,0x0F
 };
 
 const UBYTE piano_instrument[80] = {
@@ -47,3 +56,12 @@ const UBYTE snare_solo_noise_instrument[17] = {
         0x03,
         0x0F,0x0F,0x0F,0x0F,0x0F,0x0F,0x0F,0x0F,0x0F,0x0F
 };
+
+const UBYTE kick_solo_noise_instrument[11] = {
+        0x03,0x03,
+        0x04,0x04,
+        0x05,
+        0x0F,0x0F,0x0F,0x0F,0x0F,0x0F
+};
+
+

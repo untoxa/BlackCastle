@@ -17,6 +17,18 @@ void play_music(void) BANKED;
 void stop_music(void) BANKED;
 void restart_music(void) BANKED;
 
+
+enum notes
+{
+	C3, Db3, D3, Eb3, E3, F3, Gb3, G3, Ab3, A3, Bb3, B3,
+	C4, Db4, D4, Eb4, E4, F4, Gb4, G4, Ab4, A4, Bb4, B4,
+	C5, Db5, D5, Eb5, E5, F5, Gb5, G5, Ab5, A5, Bb5, B5,
+	C6, Db6, D6, Eb6, E6, F6, Gb6, G6, Ab6, A6, Bb6, B6,
+	C7, Db7, D7, Eb7, E7, F7, Gb7, G7, Ab7, A7, Bb7, B7,
+	C8, Db8, D8, Eb8, E8, F8, Gb8, G8, Ab8, A8, Bb8, B8,
+	BRK
+};
+
 //
 // NES and GB both use hardware frequency sweep for some SFX - but with different values
 //
@@ -54,20 +66,19 @@ void restart_music(void) BANKED;
 
 #define NOISE_LOOPED    0x80
 #elif defined(SEGA)
-#define WEAPON_SWEEP    0x2
-#define HEART_SWEEP     0x2
+#define WEAPON_SWEEP    A8
+#define HEART_SWEEP     D8
+#define NOISE_HIGHEST   B8
+#define NOISE_HIGHER    C8
+#define NOISE_HIGH      B7
+#define NOISE_MID_HIGH  B5
+#define NOISE_MID       C5
+#define NOISE_MID_LOW   B4
+#define NOISE_LOW       C4
+#define NOISE_LOWER     B3
+#define NOISE_LOWEST    C3
 
-#define NOISE_HIGHEST   0x0
-#define NOISE_HIGHER    0x0
-#define NOISE_HIGH      0x0
-#define NOISE_MID_HIGH  0x1
-#define NOISE_MID       0x1
-#define NOISE_MID_LOW   0x1
-#define NOISE_LOW       0x2
-#define NOISE_LOWER     0x2
-#define NOISE_LOWEST    0x2
-
-#define NOISE_LOOPED    0x4
+#define NOISE_LOOPED    0x0
 #else
 #define WEAPON_SWEEP    0x00
 #define HEART_SWEEP     0x00
@@ -86,16 +97,6 @@ void restart_music(void) BANKED;
 
 #endif
 
-enum notes
-{
-	C3, Db3, D3, Eb3, E3, F3, Gb3, G3, Ab3, A3, Bb3, B3,
-	C4, Db4, D4, Eb4, E4, F4, Gb4, G4, Ab4, A4, Bb4, B4,
-	C5, Db5, D5, Eb5, E5, F5, Gb5, G5, Ab5, A5, Bb5, B5,
-	C6, Db6, D6, Eb6, E6, F6, Gb6, G6, Ab6, A6, Bb6, B6,
-	C7, Db7, D7, Eb7, E7, F7, Gb7, G7, Ab7, A7, Bb7, B7,
-	C8, Db8, D8, Eb8, E8, F8, Gb8, G8, Ab8, A8, Bb8, B8,
-	BRK
-};
 
 #ifdef NINTENDO_NES
 __REG(0x4000) _SND4000;
