@@ -25,16 +25,16 @@ NextColor0:                     .ds 4
 NextColor1:                     .ds 4
 NextColor2:                     .ds 4
 
-; Re-purpose unused ZP __DPTR
-.define TileCount "(__DPTR)" 
+; Re-purpose unused ZP DPTR
+.define TileCount "(DPTR)" 
 ;TileCount:                      .ds 1
-.define BitBuffer "(__DPTR+1)"
+.define BitBuffer "(DPTR+1)"
 ;BitBuffer:                      .ds 1
 
 ; Re-purpose unused ZP ___SDCC_m6502_ret0-7 (SDCC temporary storage / return value)
 .define ColorCount  "___SDCC_m6502_ret0"
 ;ColorCount:                     .ds 4
-.define PlaneBuffer "__TEMP"
+.define PlaneBuffer "REGTEMP"
 ;PlaneBuffer:                    .ds 8
 
 ; Re-purpose attribute dirty flags in ZP - current version of BlackCastle won't need them
