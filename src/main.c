@@ -115,6 +115,7 @@ void main(void)
     }
     set_interrupts (VBL_IFLAG | LCD_IFLAG);
 #elif defined(SEGA)
+    WRITE_VDP_REG(VDP_R2, R2_MAP_0x3800); __WRITE_VDP_REG(VDP_R5, R5_SAT_0x3F00);
     set_sprite_palette_entry(0,4, RGB8(255, 255, 255));
     CRITICAL {
         add_VBL(vbl_isr);

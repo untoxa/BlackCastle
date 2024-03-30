@@ -791,7 +791,7 @@ void enter_level(void)
     initrand(RAND_SOURCE);
     init_level();
 
-//  SHOW_SPRITES;   // set in the LCD ISR
+    SHOW_SPRITES;
     DISPLAY_ON;
 
     add_LCD(lcd_isr);

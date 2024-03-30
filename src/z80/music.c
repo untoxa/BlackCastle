@@ -25,7 +25,7 @@ UBYTE music_cnt_ch1;
 UBYTE music_inst_cnt_ch1;
 UBYTE inst_ch1;
 UBYTE vol_ch1;
-UBYTE* instruments_ch1;
+const UBYTE* instruments_ch1;
 UBYTE instruments_index_ch1;
 
 const unsigned char *music_data_ch2;
@@ -34,7 +34,7 @@ UBYTE music_cnt_ch2;
 UBYTE music_inst_cnt_ch2;
 UBYTE inst_ch2;
 UBYTE vol_ch2;
-UBYTE* instruments_ch2;
+const UBYTE* instruments_ch2;
 UBYTE instruments_index_ch2;
 
 const unsigned char *music_data_ch3;
@@ -42,7 +42,7 @@ const unsigned char *music_ptr_ch3;
 UBYTE music_cnt_ch3;
 UBYTE music_inst_cnt_ch3;
 UBYTE inst_ch3;
-UBYTE* instruments_ch3;
+const UBYTE* instruments_ch3;
 UBYTE instruments_index_ch3;
 
 const unsigned char *music_data_ch4;
@@ -50,7 +50,7 @@ const unsigned char *music_ptr_ch4;
 UBYTE music_cnt_ch4;
 UBYTE music_inst_cnt_ch4;
 UBYTE inst_ch4;
-UBYTE* instruments_ch4;
+const UBYTE* instruments_ch4;
 UBYTE instruments_index_ch4;
 
 

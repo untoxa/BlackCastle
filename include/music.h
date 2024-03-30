@@ -10,7 +10,7 @@
 #define END_MUSIC       6
 
 void init_sound(void) BANKED;
-void set_sound(UBYTE sound) NONBANKED;
+void set_sound(UBYTE sound) BANKED;
 void play_sound(void) NONBANKED;
 void set_music(UBYTE song) BANKED;
 void play_music(void) BANKED;

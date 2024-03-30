@@ -180,7 +180,7 @@ const unsigned char shake_sound[][5] =
     {0x01,0xFF,0xF3,NOISE_MID_HIGH,0x80}
 };
 
-void set_sound(UBYTE sound) NONBANKED
+void set_sound(UBYTE sound) BANKED
 {
 #if defined(NINTENDO) || defined(NINTENDO_NES) || defined(SEGA)
     switch( sound )
