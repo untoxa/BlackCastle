@@ -60,10 +60,11 @@ void lcd_isr(void) {
 
 #elif defined(NINTENDO_NES)
 
+extern uint8_t _lcd_scanline;
+
 void vbl_isr(void) {
     if (game_state == GS_LEVEL) {
-        move_bkg(0,0);
-        HIDE_SPRITES;
+        move_bkg(scroll_pos_with_shake,0);
         if (shake != 0) {
             shake--;
             if( (shake & 1) == 1 ) {
@@ -77,20 +78,26 @@ void vbl_isr(void) {
     } else {
         scroll_pos_with_shake = (UBYTE)scroll_pos;
     }
+    _lcd_scanline = 8;
 }
 
 void lcd_isr(void) {
-    // Write directly to hardware scroll registers (only first write will have an effect)
-    PPUSCROLL = scroll_pos_with_shake;
-    PPUSCROLL = 0; // 2nd write (dummy)
-    if( game_state == GS_LEVEL ) {
-        //move_bkg(scroll_pos,0);
-        // Write directly to hardware register PPUMASK instead of shadow register
-        PPUMASK = shadow_PPUMASK | PPUMASK_SHOW_SPR;
+    if(_lcd_scanline == 8)
+    {
+        // Start of status bar
+        move_bkg(0, 8);
+        HIDE_SPRITES;
+        _lcd_scanline = (VIEWPORT_Y_OFS + 2) * 8;
+    }
+    else
+    {
+        // end of status bar
+        move_bkg(scroll_pos_with_shake, (VIEWPORT_Y_OFS + 2) * 8);
+        if( game_state == GS_LEVEL ) {
+            SHOW_SPRITES;
+        }
     }
 }
-
-extern uint8_t _lcd_scanline;
 
 #endif
 
