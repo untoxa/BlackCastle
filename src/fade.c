@@ -48,7 +48,7 @@ void fade_from_white(void) BANKED
     for(i = 0; i != 4; i++ )
     {
         set_bkg_palette(0, 4, palettes[i]);
-        set_sprite_palette(4, 4, palettes[i]);
+        set_sprite_palette(0, 4, palettes[i]);
         set_sprite_palette_entry(0,2, RGB8(255, 255, 255));
         for(j = 0; j != 4; j++ )
         {
@@ -98,7 +98,7 @@ void fade_to_white(void) BANKED
     for(i = 0; i != 4; i++ )
     {
         set_bkg_palette(0, 4, palettes[3-i]);
-        set_sprite_palette(4, 4, palettes[3-i]);
+        set_sprite_palette(0, 4, palettes[3-i]);
         set_sprite_palette_entry(0,2, RGB8(255, 255, 255));
         for(j = 0; j != 4; j++ )
         {
