@@ -1021,7 +1021,7 @@ void enter_end(void)
             game_state = GS_TITLE;
         }
 
-        if(text_index < sizeof(end_text))
+        if(text_index < sizeof(end_text)-1)
         {
             if(--text_delay == 0)
             {
