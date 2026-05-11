@@ -73,6 +73,10 @@ _set_data_common:
     lda *.tmp
     sta PPUADDR
 
+    ; Reset PPUCTRL to shadow, but clear inc-by-32-bit
+    lda *_shadow_PPUCTRL
+    and #~PPUCTRL_INC32
+    sta PPUCTRL
 
 ;decompresses a group of tiles from PRG-ROM to CHR-RAM
 Decompress:
